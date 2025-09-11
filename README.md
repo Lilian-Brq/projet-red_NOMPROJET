@@ -1,16 +1,18 @@
 # Projet Red - ETHAN SOLENE LILIAN
 
 
-# Seed & Claws
+# 🌱🐾 Seed & Claws
 
 **Univers : Stardew Valley**
+
 Projet réalisé dans le cadre du **Projet RED**.
 
 ---
 
-## Présentation
+## 📖 Présentation
 
 Seed & Claws est un mini RPG en ligne de commande développé en **Golang**.
+
 Le joueur crée son personnage, explore, combat, fabrique des équipements et intéragit avec des PNJ marchands, forgerons, alchimistes et plus encore.
 
 Le jeu reprend les mécaniques classiques d'un RPG : 
@@ -22,7 +24,7 @@ Le jeu reprend les mécaniques classiques d'un RPG :
 
 ---
 
-## Création du personnage
+## 🎭 Création du personnage
 
 - Choix du **nom** (normalisation automatique : Majuscule + minuscules)
 - Choix de la **race** :
@@ -40,7 +42,7 @@ Le jeu reprend les mécaniques classiques d'un RPG :
 
 ---
 
-## Début du jeu
+## 🎮 Début du jeu
 
 - Niveau : 1
 - Argent : 100 pièces d'or
@@ -51,7 +53,7 @@ Le jeu reprend les mécaniques classiques d'un RPG :
 
 ---
 
-## PNJ
+## 🧑‍🤝‍🧑 PNJ
 
 - **Marchand** : vend/achète des items, des sacs et des potions
 - **Forgeron** : craft des armes et des équipements
@@ -62,7 +64,7 @@ Le jeu reprend les mécaniques classiques d'un RPG :
 
 ---
 
-## Inventaire & économie
+## 📦 Inventaire & économie
 
 - Limite de base : 10 items
 - Extensible avec des sacs (+15 max)
@@ -75,7 +77,7 @@ Le jeu reprend les mécaniques classiques d'un RPG :
 
 ---
 
-## Combat
+## ⚔️ Combat
 
 - Tour par tour : joueur <-> monstre
 - Menu de combat : 
@@ -88,11 +90,11 @@ Le jeu reprend les mécaniques classiques d'un RPG :
     - Plus ou moins puissants
     - De l'attaque jusqu'au soins
 
--> Consommation de mana pour utiliser des sorts.
+👉 Consommation de mana pour utiliser des sorts.
 
 ---
 
-## Progression
+## 🏆 Progression
 
 - Gain d'XP après chaque combat
 - Passage de niveau du personnage -> augmentation PV, stats et mana

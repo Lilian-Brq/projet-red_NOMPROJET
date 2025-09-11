@@ -4,6 +4,17 @@ import (
 	"fmt"
 )
 
+func main() {
+	// init perso
+	c1 := initCharacter("Jeffrey Dahmer", "Homme", "Mage", "Humain", 1, 100, 100, []string{"épee", "ppp", "zz", "zz"}) //Ne pas oublier de remplir l'inventaire
+
+	// Affiche les infos du perso avec displayInfo
+	displayInfo(c1)
+
+	//Affiche l'inventaire
+	accessInventory(c1)
+}
+
 type character struct {
 	name       string
 	sexe       string
@@ -28,17 +39,19 @@ func initCharacter(nom, sexe, classe, race string, niveau, pv_max, pv_act int, i
 	}
 }
 
-func main() {
-	// init perso
-	c1 := initCharacter("Jeffrey Dahmer", "humain", 1, 100, 100, 3)
+func displayInfo(c character) {
+	fmt.Println("Nom:", c.name)
+	fmt.Println("Sexe:", c.sexe)
+	fmt.Println("Classe:", c.classe)
+	fmt.Println("Race:", c.race)
+	fmt.Println("Niveau:", c.niv)
+	fmt.Printf("PV: %d / %d\n", c.pv_act, c.pv_max)
+	fmt.Println("Inventaire:", c.inventaire)
+}
 
-	// affiche info du perso
-	fmt.Println("Nom:", c1.name)
-	fmt.Println("Nom:", c1.classe)
-	fmt.Println("Nom:", c1.sexe)
-	fmt.Println("Nom:", c1.race)
-	fmt.Println("Nom:", c1.pv_max)
-	fmt.Println("Nom:", c1.pv_act)
-	fmt.Println("Nom:", c1.inventaire)
-
+func accessInventory(c character) {
+	fmt.Println("Inventaire:")
+	for i := 0; i < len(c.inventaire); i++ {
+		fmt.Printf("%d. %s\n", i+1, c.inventaire[i])
+	}
 }

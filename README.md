@@ -86,7 +86,7 @@ Le jeu reprend les mécaniques classiques d'un RPG :
 
 ### Sorts :
 - Pleins de sorts différents à utiliser dans le combat :
-    - Des plus ou moins rares
+    - Plus ou moins rares
     - Plus ou moins puissants
     - De l'attaque jusqu'au soins
 

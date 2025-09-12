@@ -17,7 +17,8 @@ func main() {
 	// utilise Potion de vie
 	takePot(&c1)
 
-	// supprime item dans l'inventaire
+	// Menu Home
+	Interface(&c1)
 
 }
 
@@ -46,8 +47,8 @@ func initCharacter(nom, sexe, classe, race string, niveau, pv_max, pv_act int, i
 }
 
 func displayInfo(c character) {
-	fmt.Println("Nom:", c.name)
-	fmt.Println("Sexe:", c.sexe)
+	fmt.Println("「 ✦ 𝐍𝐚𝐦𝐞 ✦ 」", c.name)
+	fmt.Println("♀/♂", c.sexe)
 	fmt.Println("Classe:", c.classe)
 	fmt.Println("Race:", c.race)
 	fmt.Println("Niveau:", c.niv)
@@ -79,4 +80,49 @@ func takePot(c *character) {
 	}
 	// Si pas trouvé
 	fmt.Println("Vous n'avez pas de Potion dans l'inventaire !")
+}
+
+func Interface(c *character) {
+	for {
+		fmt.Println(" \n ❀  MENU PRINCIPAL ❀ ")
+		fmt.Println("1. Information du Personnage")
+		fmt.Println("2. Inventaire")
+		fmt.Println("3. QUITTER")
+
+		var choice int
+		fmt.Println("Où voulez-vous allez")
+		fmt.Scanln(&choice)
+
+		var new_choice int
+
+		switch choice {
+		case 1:
+			for {
+				fmt.Println("\n --Information du Personnage--")
+				displayInfo(*c)
+				fmt.Println(" 0. Retour")
+				fmt.Println(" Votre choix")
+				fmt.Scanln(&new_choice)
+				if new_choice == 0 {
+					break
+				}
+			}
+		case 2:
+			for {
+				fmt.Println("\n ✧ Inventaire ✧ ")
+				accessInventory(*c)
+				fmt.Println(" 0. Retour")
+				fmt.Println(" Votre choix")
+				fmt.Scanln(&new_choice)
+				if new_choice == 0 {
+					break
+				}
+			}
+		case 3:
+			fmt.Println(" 👋 Au revoir 👋")
+			return // quitte le programme
+		default:
+			fmt.Println(" Choix invalide, Veuillez réessayer")
+		}
+	}
 }

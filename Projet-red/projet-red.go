@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
+	"time"
 )
 
 func main() {
 	// init perso
-	c1 := initCharacter("Jeffrey Dahmer", "Homme", "Mage", "Humain", 1, 100, 0, [10]string{"épee", "ppp", "zz", "zz", "Potion"}) //Ne pas oublier de remplir l'inventaire
-	Wasted(&c1)
+	c1 := initCharacter("Jeffrey Dahmer", "Homme", "Mage", "Humain", 1, 100, 10, [10]string{"épee", "ppp", "zz", "zz", "Potion", "Potion de poison"}, [5]string{"Coup de poing,"}) //Ne pas oublier de remplir l'inventaire
+
 	// Menu Home
 	Interface(&c1)
 
@@ -22,9 +23,10 @@ type character struct {
 	pv_max     int
 	pv_act     int
 	inventaire [10]string
+	skill      [5]string
 }
 
-func initCharacter(nom, sexe, classe, race string, niveau, pv_max, pv_act int, inventaire [10]string) character {
+func initCharacter(nom, sexe, classe, race string, niveau, pv_max, pv_act int, inventaire [10]string, skill [5]string) character {
 	return character{
 		name:       nom,
 		sexe:       sexe,
@@ -34,6 +36,7 @@ func initCharacter(nom, sexe, classe, race string, niveau, pv_max, pv_act int, i
 		pv_max:     pv_max,
 		pv_act:     pv_act,
 		inventaire: inventaire,
+		skill:      skill,
 	}
 }
 
@@ -44,6 +47,7 @@ func displayInfo(c character) {
 	fmt.Println("Classe:", c.classe)
 	fmt.Println("Race:", c.race)
 	fmt.Println("Niveau:", c.niv)
+	fmt.Println("skill:", c.skill)
 	fmt.Printf("PV: %d / %d\n", c.pv_act, c.pv_max)
 }
 
@@ -132,15 +136,40 @@ func Interface(c *character) {
 			for {
 				fmt.Println("\n ✧ Inventaire ✧ \n ")
 				accessInventory(*c)
-
-				fmt.Println("\n 9. Utiliser Potion ")
+				fmt.Println("\n 777. Utiliser Livre de sort")
+				fmt.Println("\n 999. Utiliser Potion ")
+				fmt.Println("\n 111. Utiliser Potion de poison ")
 				fmt.Println(" 1. Marchand ")
 				fmt.Println(" 0. Retour")
 				fmt.Println(" Votre choix")
 				fmt.Scan(&new_choice)
 				switch new_choice {
-				case 9:
+				case 999:
 					takePot(c)
+				case 111:
+					poisonPot(c)
+				case 777:
+					fmt.Println(" Votre choix parmis : 1. Boule de feu 2.wigadium 3.xxxxxx 4.xxxxxx")
+					fmt.Scan(&new_choice)
+					switch new_choice {
+					case 1:
+						for i := 0; i < len(c.inventaire); i++ {
+							if c.inventaire[i] == "Livre de sort : Boule de feu" {
+								spellBook(c, "Boule de feu")
+								removeInventory(c, "Livre de sort : Boule de feu")
+
+							}
+						}
+					case 2:
+						for i := 0; i < len(c.inventaire); i++ {
+							if c.inventaire[i] == "Livre de sort : " {
+								spellBook(c, "")
+								removeInventory(c, "Livre de sort : ")
+								break
+							}
+						}
+					}
+
 				case 1:
 					fmt.Println("\n Marchand \n ")
 					fmt.Println(" 1. épée (gratuit)")
@@ -149,7 +178,10 @@ func Interface(c *character) {
 					fmt.Println(" 4. Plume de corbeau")
 					fmt.Println(" 5. Fourure de loup")
 					fmt.Println(" 6. Peau de Troll")
-					fmt.Println("\n 9. Retour Inventaire")
+					fmt.Println(" 7. Potion")
+					fmt.Println(" 8. Potion de poison")
+					fmt.Println(" 9. Livre de sort : Boule de feu")
+					fmt.Println("\n 777. Retour Inventaire")
 					fmt.Println(" 0. Retour Menu")
 					fmt.Println(" Votre choix ?")
 					fmt.Scan(&new_choice)
@@ -169,7 +201,11 @@ func Interface(c *character) {
 						addInventory(c, "Peau de Troll")
 					case 7:
 						addInventory(c, "Potion")
+					case 8:
+						addInventory(c, "Potion de poison")
 					case 9:
+						addInventory(c, "Livre de sort : boule de feu")
+					case 777:
 						accessInventory(*c)
 					default:
 						fmt.Println(" Choix Invalide, Veuillez réessayer")
@@ -189,6 +225,9 @@ func Interface(c *character) {
 				fmt.Println(" 4. Plume de corbeau")
 				fmt.Println(" 5. Fourure de loup")
 				fmt.Println("6. Peau de Troll")
+				fmt.Println("7. Potion")
+				fmt.Println("8. Potion de poison")
+				fmt.Println("9. Livre de sort : Boule de feu")
 				fmt.Println(" 0. Retour")
 				fmt.Println(" Votre choix ?")
 				fmt.Scan(&new_choice)
@@ -206,6 +245,12 @@ func Interface(c *character) {
 					addInventory(c, "Fourure de loup")
 				case 6:
 					addInventory(c, "Peau de Troll")
+				case 7:
+					addInventory(c, "Potion")
+				case 8:
+					addInventory(c, "Potion de poison")
+				case 9:
+					addInventory(c, "Livre de sort : Boule de feu")
 				default:
 					fmt.Println(" Choix Invalide, Veuillez réessayer")
 				}
@@ -226,7 +271,43 @@ func Interface(c *character) {
 func Wasted(c *character) {
 	if c.pv_act == 0 {
 		fmt.Printf(" %s est mort (;;)\n", c.name)
-		fmt.Printf("\n               ⸜(｡˃ ᵕ ˂ )⸝♡ \n \n %s est récusité avec 50pv", c.name)
+		fmt.Printf("\n               ⸜(｡˃ ᵕ ˂ )⸝♡ \n \n %s est récusité avec 50pv \n", c.name)
 		c.pv_act = 50
 	}
+}
+
+func poisonPot(c *character) {
+	for i := 0; i < len(c.inventaire); i++ {
+		if c.inventaire[i] == "Potion de poison" {
+			// Consomme la potion
+			removeInventory(c, "Potion de poison")
+			// boucle timer 3sec
+			for i := 0; i < 3; i++ {
+				time.Sleep(1 * time.Second)
+				c.pv_act -= 10
+				fmt.Printf("Dégâts de poison ! PV : %d / %d\n", c.pv_act, c.pv_max)
+				//si pv =0 le perso meurt
+				if c.pv_act == 0 {
+					Wasted(c)
+					break
+				}
+			}
+
+		}
+	}
+}
+
+func spellBook(c *character, sort string) {
+	for i := 0; i < len(c.skill); i++ {
+		if c.skill[i] == sort {
+			fmt.Println("⚠️ Compétences déjà apprise.")
+			return
+		}
+		if c.skill[i] == "" { // première case vide
+			c.skill[i] = sort
+			fmt.Printf("✅ %s Compétence acquise !\n", sort)
+			return
+		}
+	}
+	fmt.Println("⚠️ skill plein, impossible d’ajouter d'autres compétences.")
 }

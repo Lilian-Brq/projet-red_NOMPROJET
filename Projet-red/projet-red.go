@@ -6,7 +6,7 @@ import (
 
 func main() {
 	// init perso
-	c1 := initCharacter("Jeffrey Dahmer", "Homme", "Mage", "Humain", 1, 100, 40, [10]string{"épee", "ppp", "zz", "zz"}) //Ne pas oublier de remplir l'inventaire
+	c1 := initCharacter("Jeffrey Dahmer", "Homme", "Mage", "Humain", 1, 100, 40, [10]string{"épee", "ppp", "zz", "zz", "Potion"}) //Ne pas oublier de remplir l'inventaire
 
 	// Affiche les infos du perso avec displayInfo
 	displayInfo(c1)
@@ -55,31 +55,28 @@ func displayInfo(c character) {
 }
 
 func accessInventory(c character) {
+	fmt.Printf("--Inventaire--: \n")
 	for i := 0; i < len(c.inventaire); i++ {
-		fmt.Printf("--Inventaire--:\n %d. %s\n", i+1, c.inventaire[i])
+		fmt.Printf("%d. %s\n", i+1, c.inventaire[i])
 	}
 }
 
-// focntion qui permet de retirer un item dans l'inventaire
-func removeItem(inventory [10]string, item string) []string {
-	newInventory := [10]string{}
-	remove := false
-	for i := 0; i < len(inventory); i++ {
-		if !remove && inventory[i] == item {
-			remove = true
-			continue
-		}
-		newInventory = append(newInventory, inventory[i])
-	}
-	return newInventory
-}
 func takePot(c *character) {
-	vide := false
 	for i := 0; i < len(c.inventaire); i++ {
 		if c.inventaire[i] == "Potion" {
-			vide := true
+			// Consomme la potion
+			c.inventaire[i] = ""
 
+			// Soigne le joueur
+			c.pv_act += 50
+			if c.pv_act > c.pv_max {
+				c.pv_act = c.pv_max
+			}
+
+			fmt.Printf("%s utilise une Potion ! PV : %d / %d\n", c.name, c.pv_act, c.pv_max)
+			return // on s’arrête après avoir utilisé 1 potion
 		}
 	}
-
+	// Si pas trouvé
+	fmt.Println("Vous n'avez pas de Potion dans l'inventaire !")
 }

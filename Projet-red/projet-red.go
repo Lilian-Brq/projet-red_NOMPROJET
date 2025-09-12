@@ -6,8 +6,8 @@ import (
 
 func main() {
 	// init perso
-	c1 := initCharacter("Jeffrey Dahmer", "Homme", "Mage", "Humain", 1, 100, 40, [10]string{"épee", "ppp", "zz", "zz", "Potion"}) //Ne pas oublier de remplir l'inventaire
-	takePot(&c1)
+	c1 := initCharacter("Jeffrey Dahmer", "Homme", "Mage", "Humain", 1, 100, 0, [10]string{"épee", "ppp", "zz", "zz", "Potion"}) //Ne pas oublier de remplir l'inventaire
+	Wasted(&c1)
 	// Menu Home
 	Interface(&c1)
 
@@ -50,9 +50,10 @@ func displayInfo(c character) {
 //Affiche l'inventaire
 
 func accessInventory(c character) {
-	fmt.Printf("--Inventaire--: \n")
 	for i := 0; i < len(c.inventaire); i++ {
-		fmt.Printf("%d. %s\n", i+1, c.inventaire[i])
+		if c.inventaire[i] != "" {
+			fmt.Printf("%d. %s\n", i+1, c.inventaire[i])
+		}
 	}
 }
 
@@ -103,47 +104,78 @@ func takePot(c *character) {
 
 func Interface(c *character) {
 	for {
-		fmt.Println(" \n ❀  MENU PRINCIPAL ❀ ")
+		fmt.Println(" \n ❀  MENU PRINCIPAL ❀ \n ")
 		fmt.Println("1. Information du Personnage")
 		fmt.Println("2. Inventaire")
 		fmt.Println("3. Marchand ")
 		fmt.Println("4. QUITTER")
 
 		var choice int
-		fmt.Println("Où voulez-vous allez")
-		fmt.Scanln(&choice)
+		fmt.Println("Votre choix")
+		fmt.Scan(&choice)
 
 		var new_choice int
 
 		switch choice {
 		case 1:
 			for {
-				fmt.Println("\n --Information du Personnage--")
+				fmt.Println("\n --Information du Personnage--\n ")
 				displayInfo(*c)
 				fmt.Println(" 0. Retour")
 				fmt.Println(" Votre choix")
-				fmt.Scanln(&new_choice)
+				fmt.Scan(&new_choice)
 				if new_choice == 0 {
 					break
 				}
 			}
 		case 2:
 			for {
-				fmt.Println("\n ✧ Inventaire ✧ ")
+				fmt.Println("\n ✧ Inventaire ✧ \n ")
 				accessInventory(*c)
 
-				//fmt.Println("\n 1. Marchand ")
+				fmt.Println("\n 9. Utiliser Potion ")
+				fmt.Println(" 1. Marchand ")
 				fmt.Println(" 0. Retour")
 				fmt.Println(" Votre choix")
-				fmt.Scanln(&new_choice)
-				/*if new_choice == 1 {
-				fmt.Println("\n Marchand ")
-				fmt.Println(" épée (gratuit)")
-				fmt.Println("Pommes")
-				fmt.Println(" Cuir de sanglier")
-				fmt.Println(" Plume de corbeau")
-				fmt.Println(" Fourure de loup")
-				fmt.Println("Peau de Troll") */
+				fmt.Scan(&new_choice)
+				switch new_choice {
+				case 9:
+					takePot(c)
+				case 1:
+					fmt.Println("\n Marchand \n ")
+					fmt.Println(" 1. épée (gratuit)")
+					fmt.Println(" 2. Pommes")
+					fmt.Println(" 3. Cuir de sanglier")
+					fmt.Println(" 4. Plume de corbeau")
+					fmt.Println(" 5. Fourure de loup")
+					fmt.Println(" 6. Peau de Troll")
+					fmt.Println("\n 9. Retour Inventaire")
+					fmt.Println(" 0. Retour Menu")
+					fmt.Println(" Votre choix ?")
+					fmt.Scan(&new_choice)
+
+					switch new_choice {
+					case 1:
+						addInventory(c, "épée")
+					case 2:
+						addInventory(c, "Pomme")
+					case 3:
+						addInventory(c, "Cuir de Sanglier")
+					case 4:
+						addInventory(c, "Plume de Corbeau")
+					case 5:
+						addInventory(c, "Fourure de loup")
+					case 6:
+						addInventory(c, "Peau de Troll")
+					case 7:
+						addInventory(c, "Potion")
+					case 9:
+						accessInventory(*c)
+					default:
+						fmt.Println(" Choix Invalide, Veuillez réessayer")
+					}
+
+				}
 				if new_choice == 0 {
 					break
 				}
@@ -157,13 +189,11 @@ func Interface(c *character) {
 				fmt.Println(" 4. Plume de corbeau")
 				fmt.Println(" 5. Fourure de loup")
 				fmt.Println("6. Peau de Troll")
-				fmt.Println("\n 0. Retour")
-				fmt.Println(" Votre choix")
-				fmt.Scanln(&new_choice)
+				fmt.Println(" 0. Retour")
+				fmt.Println(" Votre choix ?")
+				fmt.Scan(&new_choice)
 
 				switch new_choice {
-				case 0:
-					break
 				case 1:
 					addInventory(c, "épée")
 				case 2:
@@ -190,5 +220,13 @@ func Interface(c *character) {
 		default:
 			fmt.Println(" Choix invalide, Veuillez réessayer")
 		}
+	}
+}
+
+func Wasted(c *character) {
+	if c.pv_act == 0 {
+		fmt.Printf(" %s est mort (;;)\n", c.name)
+		fmt.Printf("\n               ⸜(｡˃ ᵕ ˂ )⸝♡ \n \n %s est récusité avec 50pv", c.name)
+		c.pv_act = 50
 	}
 }

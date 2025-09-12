@@ -13,6 +13,12 @@ func main() {
 
 	//Affiche l'inventaire
 	accessInventory(c1)
+
+	// utilise Potion de vie
+	takePot(&c1)
+
+	// supprime item dans l'inventaire
+
 }
 
 type character struct {
@@ -49,12 +55,31 @@ func displayInfo(c character) {
 }
 
 func accessInventory(c character) {
-	fmt.Println("Inventaire:")
 	for i := 0; i < len(c.inventaire); i++ {
-		fmt.Printf("%d. %s\n", i+1, c.inventaire[i])
+		fmt.Printf("--Inventaire--:\n %d. %s\n", i+1, c.inventaire[i])
 	}
 }
 
-//func takePot() {
+// focntion qui permet de retirer un item dans l'inventaire
+func removeItem(inventory [10]string, item string) []string {
+	newInventory := [10]string{}
+	remove := false
+	for i := 0; i < len(inventory); i++ {
+		if !remove && inventory[i] == item {
+			remove = true
+			continue
+		}
+		newInventory = append(newInventory, inventory[i])
+	}
+	return newInventory
+}
+func takePot(c *character) {
+	vide := false
+	for i := 0; i < len(c.inventaire); i++ {
+		if c.inventaire[i] == "Potion" {
+			vide := true
 
-//}
+		}
+	}
+
+}

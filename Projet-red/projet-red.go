@@ -7,7 +7,7 @@ import (
 func main() {
 	// init perso
 	c1 := initCharacter("Jeffrey Dahmer", "Homme", "Mage", "Humain", 1, 100, 40, [10]string{"épee", "ppp", "zz", "zz", "Potion"}) //Ne pas oublier de remplir l'inventaire
-
+	takePot(&c1)
 	// Menu Home
 	Interface(&c1)
 
@@ -85,7 +85,7 @@ func takePot(c *character) {
 	for i := 0; i < len(c.inventaire); i++ {
 		if c.inventaire[i] == "Potion" {
 			// Consomme la potion
-			c.inventaire[i] = ""
+			removeInventory(c, "Potion")
 
 			// Soigne le joueur
 			c.pv_act += 50

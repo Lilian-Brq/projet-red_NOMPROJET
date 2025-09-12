@@ -6,7 +6,7 @@ import (
 
 func main() {
 	// init perso
-	c1 := initCharacter("Jeffrey Dahmer", "Homme", "Mage", "Humain", 1, 100, 100, []string{"épee", "ppp", "zz", "zz"}) //Ne pas oublier de remplir l'inventaire
+	c1 := initCharacter("Jeffrey Dahmer", "Homme", "Mage", "Humain", 1, 100, 40, [10]string{"épee", "ppp", "zz", "zz"}) //Ne pas oublier de remplir l'inventaire
 
 	// Affiche les infos du perso avec displayInfo
 	displayInfo(c1)
@@ -23,10 +23,10 @@ type character struct {
 	niv        int
 	pv_max     int
 	pv_act     int
-	inventaire []string
+	inventaire [10]string
 }
 
-func initCharacter(nom, sexe, classe, race string, niveau, pv_max, pv_act int, inventaire []string) character {
+func initCharacter(nom, sexe, classe, race string, niveau, pv_max, pv_act int, inventaire [10]string) character {
 	return character{
 		name:       nom,
 		sexe:       sexe,
@@ -46,7 +46,6 @@ func displayInfo(c character) {
 	fmt.Println("Race:", c.race)
 	fmt.Println("Niveau:", c.niv)
 	fmt.Printf("PV: %d / %d\n", c.pv_act, c.pv_max)
-	fmt.Println("Inventaire:", c.inventaire)
 }
 
 func accessInventory(c character) {
@@ -55,3 +54,7 @@ func accessInventory(c character) {
 		fmt.Printf("%d. %s\n", i+1, c.inventaire[i])
 	}
 }
+
+//func takePot() {
+
+//}

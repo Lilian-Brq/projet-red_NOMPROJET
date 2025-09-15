@@ -8,7 +8,7 @@ import (
 
 func main() {
 	// init perso
-	c1 := initCharacter("Jeffrey Dahmer", "Homme", "Mage", "Humain", 1, 100, 10, [10]string{"épee", "ppp", "zz", "zz", "Potion", "Potion de poison"}, [5]string{"Coup de poing,"}) //Ne pas oublier de remplir l'inventaire
+	c1 := initCharacter("Jeffrey Dahmer", "Homme", "Mage", "Humain", 1, 100, 10, [10]string{"Plume de Corbeau", "Cuir de Sanglier", "zz", "zz", "Potion", "Potion de poison"}, [5]string{"Coup de poing,"}, 100)
 	// creation du perso
 	characterCreation(&c1)
 	// Menu Home
@@ -26,9 +26,10 @@ type character struct {
 	pv_act     int
 	inventaire [10]string
 	skill      [5]string
+	money      int
 }
 
-func initCharacter(nom, sexe, classe, race string, niveau, pv_max, pv_act int, inventaire [10]string, skill [5]string) character {
+func initCharacter(nom, sexe, classe, race string, niveau, pv_max, pv_act int, inventaire [10]string, skill [5]string, monnaie int) character {
 	return character{
 		name:       nom,
 		sexe:       sexe,
@@ -39,6 +40,7 @@ func initCharacter(nom, sexe, classe, race string, niveau, pv_max, pv_act int, i
 		pv_act:     pv_act,
 		inventaire: inventaire,
 		skill:      skill,
+		money:      monnaie,
 	}
 }
 
@@ -51,6 +53,7 @@ func displayInfo(c character) {
 	fmt.Println("Niveau:", c.niv)
 	fmt.Println("skill:", c.skill)
 	fmt.Printf("PV: %d / %d\n", c.pv_act, c.pv_max)
+	fmt.Printf("rubis: %d", c.money)
 }
 
 //Affiche l'inventaire
@@ -114,7 +117,8 @@ func Interface(c *character) {
 		fmt.Println("1. Information du Personnage")
 		fmt.Println("2. Inventaire")
 		fmt.Println("3. Marchand ")
-		fmt.Println("4. QUITTER")
+		fmt.Println("4. Forgeron")
+		fmt.Println("5. QUITTER")
 
 		var choice int
 		fmt.Println("Votre choix")
@@ -176,8 +180,8 @@ func Interface(c *character) {
 					fmt.Println("\n Marchand \n ")
 					fmt.Println(" 1. épée (gratuit)")
 					fmt.Println(" 2. Pommes")
-					fmt.Println(" 3. Cuir de sanglier")
-					fmt.Println(" 4. Plume de corbeau")
+					fmt.Println(" 3. Cuir de Sanglier")
+					fmt.Println(" 4. Plume de Corbeau")
 					fmt.Println(" 5. Fourure de loup")
 					fmt.Println(" 6. Peau de Troll")
 					fmt.Println(" 7. Potion")
@@ -222,14 +226,14 @@ func Interface(c *character) {
 			for {
 				fmt.Println("\n Marchand ")
 				fmt.Println(" 1. épée (gratuit)")
-				fmt.Println("2. Pommes")
-				fmt.Println(" 3. Cuir de sanglier")
-				fmt.Println(" 4. Plume de corbeau")
+				fmt.Println(" 2. Pommes")
+				fmt.Println(" 3. Cuir de Sanglier")
+				fmt.Println(" 4. Plume de Corbeau")
 				fmt.Println(" 5. Fourure de loup")
-				fmt.Println("6. Peau de Troll")
-				fmt.Println("7. Potion")
-				fmt.Println("8. Potion de poison")
-				fmt.Println("9. Livre de sort : Boule de feu")
+				fmt.Println(" 6. Peau de Troll")
+				fmt.Println(" 7. Potion")
+				fmt.Println(" 8. Potion de poison")
+				fmt.Println(" 9. Livre de sort : Boule de feu")
 				fmt.Println(" 0. Retour")
 				fmt.Println(" Votre choix ?")
 				fmt.Scan(&new_choice)
@@ -262,6 +266,31 @@ func Interface(c *character) {
 			}
 
 		case 4:
+			for {
+				fmt.Println("\n Forgeron ")
+				fmt.Println(" 1. Chapeau de l'aventurier")
+				fmt.Println(" 2. Tunique de l'aventurier")
+				fmt.Println(" 3. Bottes de l'aventurier")
+				fmt.Println(" 0. Retour")
+				fmt.Println(" Votre choix ?")
+				fmt.Scan(&new_choice)
+
+				switch new_choice {
+				case 1:
+					CraftForgeron(c, "Chapeau de l'aventurier")
+				case 2:
+					CraftForgeron(c, "Tunique de l'aventurier")
+				case 3:
+					CraftForgeron(c, "Bottes de l'aventurier")
+				default:
+					fmt.Println(" Choix Invalide, Veuillez réessayer")
+				}
+				if new_choice == 0 {
+					break
+				}
+			}
+
+		case 5:
 			fmt.Println(" 👋 Au revoir 👋")
 			return // quitte le programme
 		default:
@@ -314,6 +343,53 @@ func spellBook(c *character, sort string) {
 	fmt.Println("⚠️ skill plein, impossible d’ajouter d'autres compétences.")
 }
 
+var prices = map[string]int{
+	"Potion":                       3,
+	"Potion de poison":             6,
+	"Livre de sort : Boule de feu": 25,
+	"Fourrure de Loup":             4,
+	"Peau de Troll":                7,
+	"Cuir de Sanglier":             3,
+	"Plume de Corbeau":             1,
+	"Pommes":                       0,
+	"Fourure de loup":              4,
+	"Livre de sort : boule de feu": 25,
+}
+
+func inventoryFull(inv [10]string) bool {
+	for i := 0; i < len(inv); i++ {
+		if inv[i] == "" {
+			return false
+		}
+	}
+	return true
+}
+
+func purchase(c *character, item string) {
+	price, ok := prices[item]
+	if !ok {
+		// item gratuit
+		price = 0
+	}
+
+	if inventoryFull(c.inventaire) {
+		fmt.Println("⚠️ Inventaire plein, impossible d’acheter.")
+		return
+	}
+
+	if c.money < price {
+		fmt.Printf("Rubis insuffisant : %d requis, il te manque %d.\n", price, price-c.money)
+		return
+	}
+
+	// Débite l’argent et ajoute l’objet
+	c.money -= price
+	addInventory(c, item)
+	if price > 0 {
+		fmt.Printf(" -%d Rubis | Rubis restant : %d\n", price, c.money)
+	}
+}
+
 func characterCreation(c *character) {
 	var name string
 	fmt.Println("Entrez votre Nom : ")
@@ -325,7 +401,7 @@ func characterCreation(c *character) {
 	for {
 		var classe int
 		fmt.Printf("Choisissez votre classe de personnage :\n")
-		fmt.Printf("1. Humain \n 2. Elfe \n 3. Nain \n")
+		fmt.Printf(" 1. Humain \n 2. Elfe \n 3. Nain \n")
 		fmt.Println("Votre choix ?")
 		fmt.Scan(&classe)
 		switch classe {
@@ -347,4 +423,69 @@ func characterCreation(c *character) {
 		}
 		break
 	}
+}
+
+func removeMoney(c *character, money int) {
+	c.money -= money
+	fmt.Printf("❌ %d rubis ont été retirés de votre bourse.\n", money)
+}
+
+func addMoney(c *character, money int) {
+	c.money += money
+	fmt.Printf("✅ %d rubis ont été ajoutés à votre bourse.\n", money)
+}
+
+func CraftForgeron(c *character, items string) {
+	if items == "Chapeau de l'aventurier" {
+		if containsInventory(c.inventaire, "Plume de Corbeau") && containsInventory(c.inventaire, "Cuir de Sanglier") {
+			if c.money >= 5 {
+				removeInventory(c, "Plume de Corbeau")
+				removeInventory(c, "Cuir de Sanglier")
+				removeMoney(c, 5)
+				addInventory(c, "Chapeau de l'aventurier")
+			} else {
+				fmt.Println("Vous n'avez pas assez de rubis ! ")
+			}
+		} else {
+			fmt.Println("Vous n'avez pas les objets qu'il faut.")
+		}
+	}
+	if items == "Tunique de l'aventurier" {
+		if containsInventory(c.inventaire, "Fourrure de Loup") && containsInventory(c.inventaire, "Peau de Troll") {
+			if c.money >= 5 {
+				removeInventory(c, "Fourrure de Loup")
+				removeInventory(c, "Fourrure de Loup")
+				removeInventory(c, "Peau de Troll")
+				removeMoney(c, 5)
+				addInventory(c, "Tunique de l'aventurier")
+			} else {
+				fmt.Println("Vous n'avez pas assez de rubis ! ")
+			}
+		} else {
+			fmt.Println("Vous n'avez pas les objets qu'il faut.")
+		}
+	}
+	if items == "Bottes de l'aventurier" {
+		if containsInventory(c.inventaire, "Fourrure de Loup") && containsInventory(c.inventaire, "Cuir de Sanglier") {
+			if c.money >= 5 {
+				removeInventory(c, "Fourrure de Loup")
+				removeInventory(c, "Cuir de Sanglier")
+				removeMoney(c, 5)
+				addInventory(c, "Bottes de l'aventurier")
+			} else {
+				fmt.Println("Vous n'avez pas assez de rubis ! ")
+			}
+		} else {
+			fmt.Println("Vous n'avez pas les objets qu'il faut.")
+		}
+	}
+}
+
+func containsInventory(slice [10]string, item string) bool {
+	for _, v := range slice {
+		if v == item {
+			return true
+		}
+	}
+	return false
 }

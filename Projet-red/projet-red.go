@@ -190,6 +190,7 @@ func Interface(c *character) {
 					fmt.Println("\n 777. Retour Inventaire")
 					fmt.Println("\n 0. Retour Menu")
 					fmt.Println("\n Votre choix ?")
+
 					fmt.Scan(&new_choice)
 
 					switch new_choice {
@@ -226,38 +227,37 @@ func Interface(c *character) {
 			for {
 				fmt.Println("\n Marchand \n ")
 				fmt.Println(" 1. épée (gratuit)")
-				fmt.Println(" 2. Pommes : 0 Rubis")
-				fmt.Println(" 3. Cuir de sanglier : 3 Rubis")
-				fmt.Println(" 4. Plume de corbeau : 1 Rubis")
-				fmt.Println(" 5. Fourure de loup : 4 Rubis")
-				fmt.Println(" 6. Peau de Troll : 7 Rubis")
-				fmt.Println(" 7. Potion : 3 Rubis")
-				fmt.Println(" 8. Potion de poison : 6 Rubis")
-				fmt.Println(" 9. Livre de sort -> Boule de feu : 25 Rubis")
-				fmt.Println("\n 777. Retour Inventaire")
-				fmt.Println("\n 0. Retour Menu")
-				fmt.Println("\n Votre choix ?")
+				fmt.Println(" 2. Pommes 0 Rubis")
+				fmt.Println(" 3. Cuir de Sanglier 3 Rubis")
+				fmt.Println(" 4. Plume de Corbeau 1 Rubis")
+				fmt.Println(" 5. Fourure de loup 4 Rubis")
+				fmt.Println(" 6. Peau de Troll Rubis 7 Rubis")
+				fmt.Println(" 7. Potion 3 Rubis")
+				fmt.Println(" 8. Potion de poison 6 Rubis ")
+				fmt.Println(" 9. Livre de sort : Boule de feu 25 Rubis")
+				fmt.Println(" 0. Retour")
+				fmt.Println(" Votre choix ?")
 				fmt.Scan(&new_choice)
 
 				switch new_choice {
 				case 1:
-					addInventory(c, "épée")
+					purchase(c, "épée")
 				case 2:
-					addInventory(c, "Pomme")
+					purchase(c, "Pomme")
 				case 3:
-					addInventory(c, "Cuir de Sanglier")
+					purchase(c, "Cuir de Sanglier")
 				case 4:
-					addInventory(c, "Plume de Corbeau")
+					purchase(c, "Plume de Corbeau")
 				case 5:
-					addInventory(c, "Fourure de loup")
+					purchase(c, "Fourure de loup")
 				case 6:
-					addInventory(c, "Peau de Troll")
+					purchase(c, "Peau de Troll")
 				case 7:
-					addInventory(c, "Potion")
+					purchase(c, "Potion")
 				case 8:
-					addInventory(c, "Potion de poison")
+					purchase(c, "Potion de poison")
 				case 9:
-					addInventory(c, "Livre de sort : Boule de feu")
+					purchase(c, "Livre de sort : Boule de feu")
 				default:
 					fmt.Println(" Choix Invalide, Veuillez réessayer")
 				}

@@ -179,42 +179,42 @@ func Interface(c *character) {
 				case 1:
 					fmt.Println("\n Marchand \n ")
 					fmt.Println(" 1. épée (gratuit)")
-					fmt.Println(" 2. Pommes")
-					fmt.Println(" 3. Cuir de Sanglier")
-					fmt.Println(" 4. Plume de Corbeau")
-					fmt.Println(" 5. Fourure de loup")
-					fmt.Println(" 6. Peau de Troll")
-					fmt.Println(" 7. Potion")
-					fmt.Println(" 8. Potion de poison")
-					fmt.Println(" 9. Livre de sort : Boule de feu")
+					fmt.Println(" 2. Pommes : 0 Rubis")
+					fmt.Println(" 3. Cuir de sanglier : 3 Rubis")
+					fmt.Println(" 4. Plume de corbeau : 1 Rubis")
+					fmt.Println(" 5. Fourure de loup : 4 Rubis")
+					fmt.Println(" 6. Peau de Troll : 7 Rubis")
+					fmt.Println(" 7. Potion : 3 Rubis")
+					fmt.Println(" 8. Potion de poison : 6 Rubis")
+					fmt.Println(" 9. Livre de sort -> Boule de feu : 25 Rubis")
 					fmt.Println("\n 777. Retour Inventaire")
-					fmt.Println(" 0. Retour Menu")
-					fmt.Println(" Votre choix ?")
+					fmt.Println("\n 0. Retour Menu")
+					fmt.Println("\n Votre choix ?")
 					fmt.Scan(&new_choice)
 
 					switch new_choice {
 					case 1:
-						addInventory(c, "épée")
+						purchase(c, "épée")
 					case 2:
-						addInventory(c, "Pomme")
+						purchase(c, "Pomme")
 					case 3:
-						addInventory(c, "Cuir de Sanglier")
+						purchase(c, "Cuir de Sanglier")
 					case 4:
-						addInventory(c, "Plume de Corbeau")
+						purchase(c, "Plume de Corbeau")
 					case 5:
-						addInventory(c, "Fourure de loup")
+						purchase(c, "Fourure de loup")
 					case 6:
-						addInventory(c, "Peau de Troll")
+						purchase(c, "Peau de Troll")
 					case 7:
-						addInventory(c, "Potion")
+						purchase(c, "Potion")
 					case 8:
-						addInventory(c, "Potion de poison")
+						purchase(c, "Potion de poison")
 					case 9:
-						addInventory(c, "Livre de sort : boule de feu")
+						purchase(c, "Livre de sort : boule de feu")
 					case 777:
 						accessInventory(*c)
 					default:
-						fmt.Println(" Choix Invalide, Veuillez réessayer")
+						fmt.Println("\n Choix Invalide, Veuillez réessayer")
 					}
 
 				}
@@ -224,18 +224,19 @@ func Interface(c *character) {
 			}
 		case 3:
 			for {
-				fmt.Println("\n Marchand ")
+				fmt.Println("\n Marchand \n ")
 				fmt.Println(" 1. épée (gratuit)")
-				fmt.Println(" 2. Pommes")
-				fmt.Println(" 3. Cuir de Sanglier")
-				fmt.Println(" 4. Plume de Corbeau")
-				fmt.Println(" 5. Fourure de loup")
-				fmt.Println(" 6. Peau de Troll")
-				fmt.Println(" 7. Potion")
-				fmt.Println(" 8. Potion de poison")
-				fmt.Println(" 9. Livre de sort : Boule de feu")
-				fmt.Println(" 0. Retour")
-				fmt.Println(" Votre choix ?")
+				fmt.Println(" 2. Pommes : 0 Rubis")
+				fmt.Println(" 3. Cuir de sanglier : 3 Rubis")
+				fmt.Println(" 4. Plume de corbeau : 1 Rubis")
+				fmt.Println(" 5. Fourure de loup : 4 Rubis")
+				fmt.Println(" 6. Peau de Troll : 7 Rubis")
+				fmt.Println(" 7. Potion : 3 Rubis")
+				fmt.Println(" 8. Potion de poison : 6 Rubis")
+				fmt.Println(" 9. Livre de sort -> Boule de feu : 25 Rubis")
+				fmt.Println("\n 777. Retour Inventaire")
+				fmt.Println("\n 0. Retour Menu")
+				fmt.Println("\n Votre choix ?")
 				fmt.Scan(&new_choice)
 
 				switch new_choice {
@@ -268,6 +269,7 @@ func Interface(c *character) {
 		case 4:
 			for {
 				fmt.Println("\n Forgeron ")
+				fmt.Println("Tout objet forgé coûte 5 rubis.")
 				fmt.Println(" 1. Chapeau de l'aventurier")
 				fmt.Println(" 2. Tunique de l'aventurier")
 				fmt.Println(" 3. Bottes de l'aventurier")
@@ -392,6 +394,7 @@ func purchase(c *character, item string) {
 
 func characterCreation(c *character) {
 	var name string
+	fmt.Println("Bienvenue dans 🌱🐾 Seed & Claws")
 	fmt.Println("Entrez votre Nom : ")
 	fmt.Scan(&name)
 	name = strings.ToLower(name)
@@ -413,7 +416,7 @@ func characterCreation(c *character) {
 		case 2:
 			c.classe = "Elfe"
 			c.pv_max = 80
-			c.pv_act = 60
+			c.pv_act = 40
 			fmt.Printf("Vous etes un Elfe avec %d / %d PV \n", c.pv_act, c.pv_max)
 		case 3:
 			c.classe = "Nain"

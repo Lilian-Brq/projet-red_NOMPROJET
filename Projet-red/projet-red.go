@@ -2,13 +2,15 @@ package main
 
 import (
 	"fmt"
+	"strings"
 	"time"
 )
 
 func main() {
 	// init perso
 	c1 := initCharacter("Jeffrey Dahmer", "Homme", "Mage", "Humain", 1, 100, 10, [10]string{"épee", "ppp", "zz", "zz", "Potion", "Potion de poison"}, [5]string{"Coup de poing,"}) //Ne pas oublier de remplir l'inventaire
-
+	// creation du perso
+	characterCreation(&c1)
 	// Menu Home
 	Interface(&c1)
 
@@ -310,4 +312,39 @@ func spellBook(c *character, sort string) {
 		}
 	}
 	fmt.Println("⚠️ skill plein, impossible d’ajouter d'autres compétences.")
+}
+
+func characterCreation(c *character) {
+	var name string
+	fmt.Println("Entrez votre Nom : ")
+	fmt.Scan(&name)
+	name = strings.ToLower(name)
+	name = strings.Title(name)
+	c.name = name
+	fmt.Println("personnage créé avec le nom :", c.name)
+	for {
+		var classe int
+		fmt.Printf("Choisissez votre classe de personnage :\n")
+		fmt.Printf("1. Humain \n 2. Elfe \n 3. Nain \n")
+		fmt.Println("Votre choix ?")
+		fmt.Scan(&classe)
+		switch classe {
+		case 1:
+			c.classe = "Humain"
+			c.pv_max = 100
+			c.pv_act = 50
+			fmt.Printf("Vous etes un Humain avec %d / %d PV \n", c.pv_act, c.pv_max)
+		case 2:
+			c.classe = "Elfe"
+			c.pv_max = 80
+			c.pv_act = 60
+			fmt.Printf("Vous etes un Elfe avec %d / %d PV \n", c.pv_act, c.pv_max)
+		case 3:
+			c.classe = "Nain"
+			c.pv_max = 120
+			c.pv_act = 60
+			fmt.Printf("Vous etes un Nain avec %d / %d PV \n", c.pv_act, c.pv_max)
+		}
+		break
+	}
 }

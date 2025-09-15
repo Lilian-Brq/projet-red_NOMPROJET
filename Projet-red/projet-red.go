@@ -27,6 +27,13 @@ type character struct {
 	inventaire [10]string
 	skill      [5]string
 	money      int
+	equipment  equipment
+}
+
+type equipment struct {
+	head  [1]string
+	chest [1]string
+	legs  [1]string
 }
 
 func initCharacter(nom, sexe, classe, race string, niveau, pv_max, pv_act int, inventaire [10]string, skill [5]string, monnaie int) character {

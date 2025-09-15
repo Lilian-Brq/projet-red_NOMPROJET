@@ -8,7 +8,7 @@ import (
 
 func main() {
 	// init perso
-	c1 := initCharacter("Jeffrey Dahmer", "Homme", "Mage", "Humain", 1, 100, 10, [10]string{"Plume de Corbeau", "Cuir de Sanglier", "zz", "zz", "Potion", "Potion de poison"}, [5]string{"Coup de poing,"}, 100)
+	c1 := initCharacter("", "", "", "Humain", 0, 0, 0, [10]string{"Potion"}, [5]string{""}, 100)
 	// creation du perso
 	characterCreation(&c1)
 	// Menu Home
@@ -60,7 +60,7 @@ func displayInfo(c character) {
 	fmt.Println("Niveau:", c.niv)
 	fmt.Println("skill:", c.skill)
 	fmt.Printf("PV: %d / %d\n", c.pv_act, c.pv_max)
-	fmt.Printf("rubis: %d", c.money)
+	fmt.Printf("rubis: %d\n", c.money)
 }
 
 //Affiche l'inventaire
@@ -430,9 +430,14 @@ func characterCreation(c *character) {
 			c.pv_max = 120
 			c.pv_act = 60
 			fmt.Printf("Vous etes un Nain avec %d / %d PV \n", c.pv_act, c.pv_max)
+		default:
+			fmt.Println("\n Choix Invalide, Veuillez réessayer")
 		}
 		break
 	}
+	c.niv = 1
+	fmt.Printf("Vous etes de niveau 1\n")
+	c.skill[0] = "Coup de Poing,"
 }
 
 func removeMoney(c *character, money int) {

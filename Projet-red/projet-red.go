@@ -8,7 +8,7 @@ import (
 
 func main() {
 	// init perso
-	c1 := initCharacter("", "", "", "", 0, 0, 0, [10]string{"Potion"}, [5]string{""}, 100)
+	c1 := initCharacter("", "", "", "", 0, 0, 0, []string{"Potion"}, [5]string{""}, 100)
 	// creation du perso
 	characterCreation(&c1)
 	// Menu Home
@@ -17,17 +17,18 @@ func main() {
 }
 
 type character struct {
-	name       string
-	sexe       string
-	classe     string
-	race       string
-	niv        int
-	pv_max     int
-	pv_act     int
-	inventaire [10]string
-	skill      [5]string
-	money      int
-	equipment  equipment
+	name         string
+	sexe         string
+	classe       string
+	race         string
+	niv          int
+	pv_max       int
+	pv_act       int
+	inventaire   []string
+	skill        [5]string
+	money        int
+	equipment    equipment
+	maxInventory int
 }
 
 type equipment struct {
@@ -45,18 +46,19 @@ type monster struct {
 }
 
 // Character's init
-func initCharacter(nom, sexe, classe, race string, niveau, pv_max, pv_act int, inventaire [10]string, skill [5]string, monnaie int) character {
+func initCharacter(nom, sexe, classe, race string, niveau, pv_max, pv_act int, inventaire []string, skill [5]string, monnaie int) character {
 	return character{
-		name:       nom,
-		sexe:       sexe,
-		classe:     classe,
-		race:       race,
-		niv:        niveau,
-		pv_max:     pv_max,
-		pv_act:     pv_act,
-		inventaire: inventaire,
-		skill:      skill,
-		money:      monnaie,
+		name:         nom,
+		sexe:         sexe,
+		classe:       classe,
+		race:         race,
+		niv:          niveau,
+		pv_max:       pv_max,
+		pv_act:       pv_act,
+		inventaire:   inventaire,
+		skill:        skill,
+		money:        monnaie,
+		maxInventory: 10,
 	}
 }
 
@@ -83,14 +85,12 @@ func accessInventory(c character) {
 
 // Add an item in the inventory
 func addInventory(c *character, item string) {
-	for i := 0; i < len(c.inventaire); i++ {
-		if c.inventaire[i] == "" { // première case vide
-			c.inventaire[i] = item
-			fmt.Printf("✅ %s ajouté à l'inventaire !\n", item)
-			return
-		}
+	if len(c.inventaire) >= c.maxInventory {
+		fmt.Println("⚠️ Inventaire plein, impossible d’ajouter l’objet.")
+		return
 	}
-	fmt.Println("⚠️ Inventaire plein, impossible d’ajouter l’objet.")
+	c.inventaire = append(c.inventaire, item)
+	fmt.Printf("✅ %s ajouté à l'inventaire !\n", item)
 }
 
 // Remove an item of the inventory
@@ -158,6 +158,7 @@ func Interface(c *character) {
 			for {
 				fmt.Println("\n ✧ Inventaire ✧ \n ")
 				accessInventory(*c)
+				fmt.Println("\n 666. Agrandir sac ")
 				fmt.Println("\n 777. Utiliser Livre de sort")
 				fmt.Println("\n 999. Utiliser Potion ")
 				fmt.Println("\n 111. Utiliser Potion de poison ")
@@ -170,6 +171,35 @@ func Interface(c *character) {
 					takePot(c)
 				case 111:
 					poisonPot(c)
+				case 666:
+					fmt.Println("Vous avez : 1. Petit sac; 2. Moyen sac; 3. Grand sac")
+					fmt.Scan(&new_choice)
+					switch new_choice {
+					case 1:
+						for i := 0; i < len(c.inventaire); i++ {
+							if c.inventaire[i] == "Petit sac" {
+								upgradeInventorySlot(c, "Petit sac")
+								removeInventory(c, "Petit sac")
+
+							}
+						}
+					case 2:
+						for i := 0; i < len(c.inventaire); i++ {
+							if c.inventaire[i] == "Moyen sac" {
+								upgradeInventorySlot(c, "Moyen sac")
+								removeInventory(c, "Moyen sac")
+
+							}
+						}
+					case 3:
+						for i := 0; i < len(c.inventaire); i++ {
+							if c.inventaire[i] == "Grand sac" {
+								upgradeInventorySlot(c, "Grand sac")
+								removeInventory(c, "Grand sac")
+
+							}
+						}
+					}
 				case 777:
 					fmt.Println(" Votre choix parmis : 1. Boule de feu 2.wigadium 3.xxxxxx 4.xxxxxx")
 					fmt.Scan(&new_choice)
@@ -214,6 +244,9 @@ func Interface(c *character) {
 								fmt.Println(" 7. Potion : 3 Rubis")
 								fmt.Println(" 8. Potion de poison : 6 Rubis")
 								fmt.Println(" 9. Livre de sort -> Boule de feu : 25 Rubis")
+								fmt.Println(" 10. Petit sac (+5) : 10 rubis")
+								fmt.Println(" 11. Moyen sac (+10) : 20 rubis")
+								fmt.Println(" 12. Grand sac (+15) : 30 rubis")
 								fmt.Println("\n 777. Retour Inventaire")
 								fmt.Println("\n 0. Retour Menu")
 								fmt.Println("\n Votre choix ?")
@@ -239,6 +272,24 @@ func Interface(c *character) {
 									purchase(c, "Potion de poison")
 								case 9:
 									purchase(c, "Livre de sort : boule de feu")
+								case 10:
+									if len(c.inventaire) >= c.maxInventory {
+										fmt.Println("⚠️ Inventaire plein, impossible d’ajouter l’objet.")
+										break
+									}
+									purchase(c, "Petit sac")
+								case 11:
+									if len(c.inventaire) >= c.maxInventory {
+										fmt.Println("⚠️ Inventaire plein, impossible d’ajouter l’objet.")
+										break
+									}
+									purchase(c, "Moyen sac")
+								case 12:
+									if len(c.inventaire) >= c.maxInventory {
+										fmt.Println("⚠️ Inventaire plein, impossible d’ajouter l’objet.")
+										break
+									}
+									purchase(c, "Grand sac")
 								case 777:
 									accessInventory(*c)
 								default:
@@ -300,6 +351,9 @@ func Interface(c *character) {
 						}
 					}
 				}
+				if new_choice == 0 {
+					break
+				}
 			}
 		case 3:
 			for {
@@ -323,6 +377,9 @@ func Interface(c *character) {
 						fmt.Println(" 7. Potion : 3 Rubis")
 						fmt.Println(" 8. Potion de poison : 6 Rubis")
 						fmt.Println(" 9. Livre de sort -> Boule de feu : 25 Rubis")
+						fmt.Println(" 10. Petit sac (+5) : 10 rubis")
+						fmt.Println(" 11. Moyen sac (+10) : 20 rubis")
+						fmt.Println(" 12. Grand sac (+15) : 30 rubis")
 						fmt.Println("\n 777. Retour Inventaire")
 						fmt.Println("\n 0. Retour Menu")
 						fmt.Println("\n Votre choix ?")
@@ -348,6 +405,24 @@ func Interface(c *character) {
 							purchase(c, "Potion de poison")
 						case 9:
 							purchase(c, "Livre de sort : boule de feu")
+						case 10:
+							if len(c.inventaire) >= c.maxInventory {
+								fmt.Println("⚠️ Inventaire plein, impossible d’ajouter l’objet.")
+								break
+							}
+							purchase(c, "Petit sac")
+						case 11:
+							if len(c.inventaire) >= c.maxInventory {
+								fmt.Println("⚠️ Inventaire plein, impossible d’ajouter l’objet.")
+								break
+							}
+							purchase(c, "Moyen sac")
+						case 12:
+							if len(c.inventaire) >= c.maxInventory {
+								fmt.Println("⚠️ Inventaire plein, impossible d’ajouter l’objet.")
+								break
+							}
+							purchase(c, "Grand sac")
 						case 777:
 							accessInventory(*c)
 						default:
@@ -499,6 +574,9 @@ var prices = map[string]int{
 	"Cuir de Sanglier":             3,
 	"Plume de Corbeau":             1,
 	"Pommes":                       1,
+	"Petit Sac":                    5,
+	"Moyen Sac":                    10,
+	"Grand Sac":                    15,
 }
 
 var selling = map[string]int{
@@ -512,16 +590,6 @@ var selling = map[string]int{
 	"Pommes":                       1,
 }
 
-// Return if the inventory is full
-func inventoryFull(inv [10]string) bool {
-	for i := 0; i < len(inv); i++ {
-		if inv[i] == "" {
-			return false
-		}
-	}
-	return true
-}
-
 // Function for purchasing items
 func purchase(c *character, item string) {
 	price, ok := prices[item]
@@ -530,7 +598,7 @@ func purchase(c *character, item string) {
 		price = 0
 	}
 
-	if inventoryFull(c.inventaire) {
+	if len(c.inventaire) >= c.maxInventory {
 		fmt.Println("⚠️ Inventaire plein, impossible d’acheter.")
 		return
 	}
@@ -662,7 +730,7 @@ func CraftForgeron(c *character, items string) {
 }
 
 // If an item is in the Inventory
-func containsInventory(slice [10]string, item string) bool {
+func containsInventory(slice []string, item string) bool {
 	for _, v := range slice {
 		if v == item {
 			return true
@@ -678,5 +746,21 @@ func initGoblin(nom string, niveau, pv_max, pv_act int, attack int) monster {
 		pv_max: 40,
 		pv_act: 40,
 		attack: 5,
+	}
+}
+
+func upgradeInventorySlot(c *character, size string) {
+	switch size {
+	case "Petit sac":
+		c.maxInventory += 5
+		fmt.Println("Vous avez utilisé un Petit sac ( +5 places ) ")
+	case "Moyen sac":
+		c.maxInventory += 10
+		fmt.Println("Vous avez utilisé un Moyen sac ( +10 places ) ")
+	case "Grand sac":
+		c.maxInventory += 15
+		fmt.Println("Vous avez utilisé un Grand sac ( +15 places ) ")
+	default:
+		fmt.Println(" Type de sac inconnu.")
 	}
 }

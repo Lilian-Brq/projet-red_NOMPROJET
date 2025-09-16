@@ -739,16 +739,12 @@ func containsInventory(slice []string, item string) bool {
 	return false
 }
 
-func initGoblin(nom string, niveau, pv_max, pv_act int, attack int) monster {
-	return monster{
-		name:   "Goblin",
-		niv:    5,
-		pv_max: 40,
-		pv_act: 40,
-		attack: 5,
-	}
+// Goblin
+func initGoblin() monster {
+	return monster{name: "Gobelin d'entraînement", niv: 1, pv_max: 40, pv_act: 40, attack: 5}
 }
 
+// Inventory ugrapding with bag
 func upgradeInventorySlot(c *character, size string) {
 	switch size {
 	case "Petit sac":
@@ -763,4 +759,15 @@ func upgradeInventorySlot(c *character, size string) {
 	default:
 		fmt.Println(" Type de sac inconnu.")
 	}
+}
+
+// Goblin attack pattern
+func goblinPattern(c *character, g *monster, turn int) {
+	dmg := g.attack
+	if turn%3 == 0 {
+		dmg *= 2
+	}
+	c.pv_act -= dmg
+	fmt.Printf("%s inflige à %s %d dégâts ! (%d/%d PV)\n", g.name, c.name, dmg, c.pv_act, c.pv_max)
+	Wasted(c)
 }

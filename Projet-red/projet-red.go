@@ -36,6 +36,15 @@ type equipment struct {
 	legs  [1]string
 }
 
+type monster struct {
+	name   string
+	niv    int
+	pv_max int
+	pv_act int
+	attack int
+}
+
+// Character's init
 func initCharacter(nom, sexe, classe, race string, niveau, pv_max, pv_act int, inventaire [10]string, skill [5]string, monnaie int) character {
 	return character{
 		name:       nom,
@@ -51,7 +60,7 @@ func initCharacter(nom, sexe, classe, race string, niveau, pv_max, pv_act int, i
 	}
 }
 
-// Affiche les infos du perso avec displayInfo
+// Show the informations of the character with displayInfo
 func displayInfo(c character) {
 	fmt.Println("「 ✦ 𝐍𝐚𝐦𝐞 ✦ 」", c.name)
 	fmt.Println("♀/♂", c.sexe)
@@ -63,8 +72,7 @@ func displayInfo(c character) {
 	fmt.Printf("rubis: %d\n", c.money)
 }
 
-//Affiche l'inventaire
-
+// Show the Inventory
 func accessInventory(c character) {
 	for i := 0; i < len(c.inventaire); i++ {
 		if c.inventaire[i] != "" {
@@ -73,7 +81,7 @@ func accessInventory(c character) {
 	}
 }
 
-// Ajoute un item à l'inventaire
+// Add an item in the inventory
 func addInventory(c *character, item string) {
 	for i := 0; i < len(c.inventaire); i++ {
 		if c.inventaire[i] == "" { // première case vide
@@ -85,7 +93,7 @@ func addInventory(c *character, item string) {
 	fmt.Println("⚠️ Inventaire plein, impossible d’ajouter l’objet.")
 }
 
-// Retirer un item de l’inventaire
+// Remove an item of the inventory
 func removeInventory(c *character, item string) {
 	for i := 0; i < len(c.inventaire); i++ {
 		if c.inventaire[i] == item {
@@ -97,7 +105,7 @@ func removeInventory(c *character, item string) {
 	fmt.Printf("⚠️ %s n’est pas dans l’inventaire.\n", item)
 }
 
-// utilise Potion de vie
+// Use a potion
 func takePot(c *character) {
 	for i := 0; i < len(c.inventaire); i++ {
 		if c.inventaire[i] == "Potion" {
@@ -118,6 +126,7 @@ func takePot(c *character) {
 	fmt.Println("Vous n'avez pas de Potion dans l'inventaire !")
 }
 
+// Game Display
 func Interface(c *character) {
 	for {
 		fmt.Println(" \n ❀  MENU PRINCIPAL ❀ \n ")
@@ -184,95 +193,221 @@ func Interface(c *character) {
 					}
 
 				case 1:
-					fmt.Println("\n Marchand \n ")
-					fmt.Println(" 1. épée (gratuit)")
-					fmt.Println(" 2. Pommes : 0 Rubis")
-					fmt.Println(" 3. Cuir de sanglier : 3 Rubis")
-					fmt.Println(" 4. Plume de corbeau : 1 Rubis")
-					fmt.Println(" 5. Fourure de loup : 4 Rubis")
-					fmt.Println(" 6. Peau de Troll : 7 Rubis")
-					fmt.Println(" 7. Potion : 3 Rubis")
-					fmt.Println(" 8. Potion de poison : 6 Rubis")
-					fmt.Println(" 9. Livre de sort -> Boule de feu : 25 Rubis")
-					fmt.Println("\n 777. Retour Inventaire")
-					fmt.Println("\n 0. Retour Menu")
-					fmt.Println("\n Votre choix ?")
+					for {
+						fmt.Println("\n Marchand")
+						fmt.Println(" 1. Acheter")
+						fmt.Println(" 2. Vendre")
+						fmt.Println(" 0. Retour Menu")
 
-					fmt.Scan(&new_choice)
+						fmt.Scan(&new_choice)
 
-					switch new_choice {
-					case 1:
-						purchase(c, "épée")
-					case 2:
-						purchase(c, "Pomme")
-					case 3:
-						purchase(c, "Cuir de Sanglier")
-					case 4:
-						purchase(c, "Plume de Corbeau")
-					case 5:
-						purchase(c, "Fourure de loup")
-					case 6:
-						purchase(c, "Peau de Troll")
-					case 7:
-						purchase(c, "Potion")
-					case 8:
-						purchase(c, "Potion de poison")
-					case 9:
-						purchase(c, "Livre de sort : boule de feu")
-					case 777:
-						accessInventory(*c)
-					default:
-						fmt.Println("\n Choix Invalide, Veuillez réessayer")
+						switch new_choice {
+						case 1:
+							for {
+								fmt.Println("\n Marchand \n ")
+								fmt.Println(" 1. épée (gratuit)")
+								fmt.Println(" 2. Pommes : 1 Rubis")
+								fmt.Println(" 3. Cuir de sanglier : 3 Rubis")
+								fmt.Println(" 4. Plume de corbeau : 1 Rubis")
+								fmt.Println(" 5. Fourure de loup : 4 Rubis")
+								fmt.Println(" 6. Peau de Troll : 7 Rubis")
+								fmt.Println(" 7. Potion : 3 Rubis")
+								fmt.Println(" 8. Potion de poison : 6 Rubis")
+								fmt.Println(" 9. Livre de sort -> Boule de feu : 25 Rubis")
+								fmt.Println("\n 777. Retour Inventaire")
+								fmt.Println("\n 0. Retour Menu")
+								fmt.Println("\n Votre choix ?")
+
+								fmt.Scan(&new_choice)
+
+								switch new_choice {
+								case 1:
+									purchase(c, "épée")
+								case 2:
+									purchase(c, "Pomme")
+								case 3:
+									purchase(c, "Cuir de Sanglier")
+								case 4:
+									purchase(c, "Plume de Corbeau")
+								case 5:
+									purchase(c, "Fourure de loup")
+								case 6:
+									purchase(c, "Peau de Troll")
+								case 7:
+									purchase(c, "Potion")
+								case 8:
+									purchase(c, "Potion de poison")
+								case 9:
+									purchase(c, "Livre de sort : boule de feu")
+								case 777:
+									accessInventory(*c)
+								default:
+									fmt.Println("\n Choix Invalide, Veuillez réessayer")
+								}
+								if new_choice == 0 {
+									break
+								}
+							}
+						case 2:
+							for {
+								fmt.Println("\n Marchand \n ")
+								fmt.Println(" 1. épée : 0 rubis")
+								fmt.Println(" 2. Pommes : 1 Rubis")
+								fmt.Println(" 3. Cuir de sanglier : 2 Rubis")
+								fmt.Println(" 4. Plume de corbeau : 1 Rubis")
+								fmt.Println(" 5. Fourure de loup : 3 Rubis")
+								fmt.Println(" 6. Peau de Troll : 5 Rubis")
+								fmt.Println(" 7. Potion : 2 Rubis")
+								fmt.Println(" 8. Potion de poison : 4 Rubis")
+								fmt.Println(" 9. Livre de sort -> Boule de feu : 18 Rubis")
+								fmt.Println("\n 777. Retour Inventaire")
+								fmt.Println("\n 0. Retour Menu")
+								fmt.Println("\n Votre choix ?")
+
+								fmt.Scan(&new_choice)
+
+								switch new_choice {
+								case 1:
+									sell(c, "épée")
+								case 2:
+									sell(c, "Pomme")
+								case 3:
+									sell(c, "Cuir de Sanglier")
+								case 4:
+									sell(c, "Plume de Corbeau")
+								case 5:
+									sell(c, "Fourure de loup")
+								case 6:
+									sell(c, "Peau de Troll")
+								case 7:
+									sell(c, "Potion")
+								case 8:
+									sell(c, "Potion de poison")
+								case 9:
+									sell(c, "Livre de sort : boule de feu")
+								case 777:
+									accessInventory(*c)
+								default:
+									fmt.Println("\n Choix Invalide, Veuillez réessayer")
+								}
+								if new_choice == 0 {
+									break
+								}
+							}
+						}
+						if new_choice == 0 {
+							break
+						}
 					}
-
-				}
-				if new_choice == 0 {
-					break
 				}
 			}
 		case 3:
 			for {
-				fmt.Println("\n Marchand \n ")
-				fmt.Println(" 1. épée (gratuit)")
-				fmt.Println(" 2. Pommes 0 Rubis")
-				fmt.Println(" 3. Cuir de Sanglier 3 Rubis")
-				fmt.Println(" 4. Plume de Corbeau 1 Rubis")
-				fmt.Println(" 5. Fourure de loup 4 Rubis")
-				fmt.Println(" 6. Peau de Troll Rubis 7 Rubis")
-				fmt.Println(" 7. Potion 3 Rubis")
-				fmt.Println(" 8. Potion de poison 6 Rubis ")
-				fmt.Println(" 9. Livre de sort : Boule de feu 25 Rubis")
-				fmt.Println(" 0. Retour")
-				fmt.Println(" Votre choix ?")
+				fmt.Println("\n Marchand")
+				fmt.Println(" 1. Acheter")
+				fmt.Println(" 2. Vendre")
+				fmt.Println(" 0. Retour Menu")
+
 				fmt.Scan(&new_choice)
 
 				switch new_choice {
 				case 1:
-					purchase(c, "épée")
+					for {
+						fmt.Println("\n Marchand \n ")
+						fmt.Println(" 1. épée (gratuit)")
+						fmt.Println(" 2. Pommes : 1 Rubis")
+						fmt.Println(" 3. Cuir de sanglier : 3 Rubis")
+						fmt.Println(" 4. Plume de corbeau : 1 Rubis")
+						fmt.Println(" 5. Fourure de loup : 4 Rubis")
+						fmt.Println(" 6. Peau de Troll : 7 Rubis")
+						fmt.Println(" 7. Potion : 3 Rubis")
+						fmt.Println(" 8. Potion de poison : 6 Rubis")
+						fmt.Println(" 9. Livre de sort -> Boule de feu : 25 Rubis")
+						fmt.Println("\n 777. Retour Inventaire")
+						fmt.Println("\n 0. Retour Menu")
+						fmt.Println("\n Votre choix ?")
+
+						fmt.Scan(&new_choice)
+
+						switch new_choice {
+						case 1:
+							purchase(c, "épée")
+						case 2:
+							purchase(c, "Pomme")
+						case 3:
+							purchase(c, "Cuir de Sanglier")
+						case 4:
+							purchase(c, "Plume de Corbeau")
+						case 5:
+							purchase(c, "Fourure de loup")
+						case 6:
+							purchase(c, "Peau de Troll")
+						case 7:
+							purchase(c, "Potion")
+						case 8:
+							purchase(c, "Potion de poison")
+						case 9:
+							purchase(c, "Livre de sort : boule de feu")
+						case 777:
+							accessInventory(*c)
+						default:
+							fmt.Println("\n Choix Invalide, Veuillez réessayer")
+						}
+						if new_choice == 0 {
+							break
+						}
+					}
 				case 2:
-					purchase(c, "Pomme")
-				case 3:
-					purchase(c, "Cuir de Sanglier")
-				case 4:
-					purchase(c, "Plume de Corbeau")
-				case 5:
-					purchase(c, "Fourure de loup")
-				case 6:
-					purchase(c, "Peau de Troll")
-				case 7:
-					purchase(c, "Potion")
-				case 8:
-					purchase(c, "Potion de poison")
-				case 9:
-					purchase(c, "Livre de sort : Boule de feu")
-				default:
-					fmt.Println(" Choix Invalide, Veuillez réessayer")
+					for {
+						fmt.Println("\n Marchand \n ")
+						fmt.Println(" 1. épée : 0 rubis")
+						fmt.Println(" 2. Pommes : 1 Rubis")
+						fmt.Println(" 3. Cuir de sanglier : 2 Rubis")
+						fmt.Println(" 4. Plume de corbeau : 1 Rubis")
+						fmt.Println(" 5. Fourure de loup : 3 Rubis")
+						fmt.Println(" 6. Peau de Troll : 5 Rubis")
+						fmt.Println(" 7. Potion : 2 Rubis")
+						fmt.Println(" 8. Potion de poison : 4 Rubis")
+						fmt.Println(" 9. Livre de sort -> Boule de feu : 18 Rubis")
+						fmt.Println("\n 777. Retour Inventaire")
+						fmt.Println("\n 0. Retour Menu")
+						fmt.Println("\n Votre choix ?")
+
+						fmt.Scan(&new_choice)
+
+						switch new_choice {
+						case 1:
+							sell(c, "épée")
+						case 2:
+							sell(c, "Pomme")
+						case 3:
+							sell(c, "Cuir de Sanglier")
+						case 4:
+							sell(c, "Plume de Corbeau")
+						case 5:
+							sell(c, "Fourure de loup")
+						case 6:
+							sell(c, "Peau de Troll")
+						case 7:
+							sell(c, "Potion")
+						case 8:
+							sell(c, "Potion de poison")
+						case 9:
+							sell(c, "Livre de sort : boule de feu")
+						case 777:
+							accessInventory(*c)
+						default:
+							fmt.Println("\n Choix Invalide, Veuillez réessayer")
+						}
+						if new_choice == 0 {
+							break
+						}
+					}
 				}
 				if new_choice == 0 {
 					break
 				}
 			}
-
 		case 4:
 			for {
 				fmt.Println("\n Forgeron ")
@@ -308,6 +443,7 @@ func Interface(c *character) {
 	}
 }
 
+// Death Animation
 func Wasted(c *character) {
 	if c.pv_act == 0 {
 		fmt.Printf(" %s est mort (;;)\n", c.name)
@@ -316,6 +452,7 @@ func Wasted(c *character) {
 	}
 }
 
+// Poison Potion
 func poisonPot(c *character) {
 	for i := 0; i < len(c.inventaire); i++ {
 		if c.inventaire[i] == "Potion de poison" {
@@ -337,6 +474,7 @@ func poisonPot(c *character) {
 	}
 }
 
+// Learning Skills
 func spellBook(c *character, sort string) {
 	for i := 0; i < len(c.skill); i++ {
 		if c.skill[i] == sort {
@@ -360,11 +498,21 @@ var prices = map[string]int{
 	"Peau de Troll":                7,
 	"Cuir de Sanglier":             3,
 	"Plume de Corbeau":             1,
-	"Pommes":                       0,
-	"Fourure de loup":              4,
-	"Livre de sort : boule de feu": 25,
+	"Pommes":                       1,
 }
 
+var selling = map[string]int{
+	"Potion":                       2,
+	"Potion de poison":             4,
+	"Livre de sort : Boule de feu": 18,
+	"Fourrure de Loup":             3,
+	"Peau de Troll":                5,
+	"Cuir de Sanglier":             2,
+	"Plume de Corbeau":             1,
+	"Pommes":                       1,
+}
+
+// Return if the inventory is full
 func inventoryFull(inv [10]string) bool {
 	for i := 0; i < len(inv); i++ {
 		if inv[i] == "" {
@@ -374,6 +522,7 @@ func inventoryFull(inv [10]string) bool {
 	return true
 }
 
+// Function for purchasing items
 func purchase(c *character, item string) {
 	price, ok := prices[item]
 	if !ok {
@@ -392,13 +541,14 @@ func purchase(c *character, item string) {
 	}
 
 	// Débite l’argent et ajoute l’objet
-	c.money -= price
+	removeMoney(c, price)
 	addInventory(c, item)
 	if price > 0 {
 		fmt.Printf(" -%d Rubis | Rubis restant : %d\n", price, c.money)
 	}
 }
 
+// To create the character at the beginning of the game
 func characterCreation(c *character) {
 	var name string
 	fmt.Println("Bienvenue dans 🌱🐾 Seed & Claws")
@@ -440,16 +590,31 @@ func characterCreation(c *character) {
 	c.skill[0] = "Coup de Poing,"
 }
 
+// Remove money of the inventory
 func removeMoney(c *character, money int) {
 	c.money -= money
 	fmt.Printf("❌ %d rubis ont été retirés de votre bourse.\n", money)
 }
 
+// Add money in the inventory
 func addMoney(c *character, money int) {
 	c.money += money
 	fmt.Printf("✅ %d rubis ont été ajoutés à votre bourse.\n", money)
 }
 
+// Function for selling items
+func sell(c *character, item string) {
+	price := selling[item]
+	if containsInventory(c.inventaire, item) {
+		removeInventory(c, item)
+		addMoney(c, price)
+	} else {
+		fmt.Println("Vous n'avez pas l'objet sur vous.")
+		return
+	}
+}
+
+// Blacksmith craft
 func CraftForgeron(c *character, items string) {
 	if items == "Chapeau de l'aventurier" {
 		if containsInventory(c.inventaire, "Plume de Corbeau") && containsInventory(c.inventaire, "Cuir de Sanglier") {
@@ -496,6 +661,7 @@ func CraftForgeron(c *character, items string) {
 	}
 }
 
+// If an item is in the Inventory
 func containsInventory(slice [10]string, item string) bool {
 	for _, v := range slice {
 		if v == item {
@@ -503,4 +669,14 @@ func containsInventory(slice [10]string, item string) bool {
 		}
 	}
 	return false
+}
+
+func initGoblin(nom string, niveau, pv_max, pv_act int, attack int) monster {
+	return monster{
+		name:   "Goblin",
+		niv:    5,
+		pv_max: 40,
+		pv_act: 40,
+		attack: 5,
+	}
 }

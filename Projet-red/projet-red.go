@@ -159,6 +159,7 @@ func Interface(c *character) {
 			for {
 				fmt.Println("\n ✧ Inventaire ✧ \n ")
 				accessInventory(*c)
+				fmt.Println("\n 222. Equipe un vêtement ")
 				fmt.Println("\n 666. Agrandir sac ")
 				fmt.Println("\n 777. Utiliser Livre de sort")
 				fmt.Println("\n 999. Utiliser Potion ")
@@ -167,6 +168,38 @@ func Interface(c *character) {
 				fmt.Println(" Votre choix")
 				fmt.Scan(&new_choice)
 				switch new_choice {
+				case 222:
+					fmt.Println("Selon votre inventaire : Vous avez : 1. Chapeau de paille ; 2. Salopette; 3. Bottes de pluie")
+					fmt.Scan(&new_choice)
+					switch new_choice {
+					case 1:
+						for i := 0; i < len(c.inventaire); i++ {
+							if c.inventaire[i] == "Chapeau de paille" {
+								equipItem(c, "Bottes de pluie")
+								removeInventory(c, "Chapeau de paille")
+
+							}
+						}
+					case 2:
+						for i := 0; i < len(c.inventaire); i++ {
+							if c.inventaire[i] == "Salopette" {
+								equipItem(c, "Bottes de pluie")
+								removeInventory(c, "Salopette")
+
+							}
+						}
+					case 3:
+						for i := 0; i < len(c.inventaire); i++ {
+							if c.inventaire[i] == "Bottes de pluie" {
+								equipItem(c, "Bottes de pluie")
+								removeInventory(c, "Bottes de pluie")
+
+							}
+						}
+					default:
+						fmt.Println("\n Choix Invalide, Veuillez réessayer")
+					}
+
 				case 999:
 					takePot(c)
 				case 666:
@@ -197,6 +230,8 @@ func Interface(c *character) {
 
 							}
 						}
+					default:
+						fmt.Println("\n Choix Invalide, Veuillez réessayer")
 					}
 				case 777:
 					fmt.Println(" Votre choix parmis : 1. Boule de feu 2.wigadium 3.xxxxxx 4.xxxxxx")
@@ -218,6 +253,8 @@ func Interface(c *character) {
 								break
 							}
 						}
+					default:
+						fmt.Println("\n Choix Invalide, Veuillez réessayer")
 					}
 
 				case 1:

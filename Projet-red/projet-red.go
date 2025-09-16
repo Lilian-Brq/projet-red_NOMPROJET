@@ -8,7 +8,7 @@ import (
 
 func main() {
 	// init perso
-	c1 := initCharacter("", "", "", "Humain", 0, 0, 0, [10]string{"Potion"}, [5]string{""}, 100)
+	c1 := initCharacter("", "", "", "", 0, 0, 0, [10]string{"Potion"}, [5]string{""}, 100)
 	// creation du perso
 	characterCreation(&c1)
 	// Menu Home
@@ -409,24 +409,24 @@ func characterCreation(c *character) {
 	c.name = name
 	fmt.Println("personnage créé avec le nom :", c.name)
 	for {
-		var classe int
+		var race int
 		fmt.Printf("Choisissez votre classe de personnage :\n")
 		fmt.Printf(" 1. Humain \n 2. Elfe \n 3. Nain \n")
 		fmt.Println("Votre choix ?")
-		fmt.Scan(&classe)
-		switch classe {
+		fmt.Scan(&race)
+		switch race {
 		case 1:
-			c.classe = "Humain"
+			c.race = "Humain"
 			c.pv_max = 100
 			c.pv_act = 50
 			fmt.Printf("Vous etes un Humain avec %d / %d PV \n", c.pv_act, c.pv_max)
 		case 2:
-			c.classe = "Elfe"
+			c.race = "Elfe"
 			c.pv_max = 80
 			c.pv_act = 40
 			fmt.Printf("Vous etes un Elfe avec %d / %d PV \n", c.pv_act, c.pv_max)
 		case 3:
-			c.classe = "Nain"
+			c.race = "Nain"
 			c.pv_max = 120
 			c.pv_act = 60
 			fmt.Printf("Vous etes un Nain avec %d / %d PV \n", c.pv_act, c.pv_max)

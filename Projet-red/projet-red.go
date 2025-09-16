@@ -110,6 +110,7 @@ func takePot(c *character) {
 	for i := 0; i < len(c.inventaire); i++ {
 		if c.inventaire[i] == "Potion" {
 			// Consomme la potion
+			fmt.Printf("Vous utilisez Potion de soin")
 			removeInventory(c, "Potion")
 
 			// Soigne le joueur
@@ -161,7 +162,6 @@ func Interface(c *character) {
 				fmt.Println("\n 666. Agrandir sac ")
 				fmt.Println("\n 777. Utiliser Livre de sort")
 				fmt.Println("\n 999. Utiliser Potion ")
-				fmt.Println("\n 111. Utiliser Potion de poison ")
 				fmt.Println(" 1. Marchand ")
 				fmt.Println(" 0. Retour")
 				fmt.Println(" Votre choix")
@@ -169,8 +169,6 @@ func Interface(c *character) {
 				switch new_choice {
 				case 999:
 					takePot(c)
-				case 111:
-					poisonPot(c)
 				case 666:
 					fmt.Println("Vous avez : 1. Petit sac; 2. Moyen sac; 3. Grand sac")
 					fmt.Scan(&new_choice)
@@ -519,30 +517,41 @@ func Interface(c *character) {
 }
 
 // Death Animation
-func Wasted(c *character) {
-	if c.pv_act == 0 {
+func Wasted(c *character, g *monster) {
+	if c.pv_act <= 0 {
 		fmt.Printf(" %s est mort (;;)\n", c.name)
 		fmt.Printf("\n               ⸜(｡˃ ᵕ ˂ )⸝♡ \n \n %s est récusité avec 50pv \n", c.name)
 		c.pv_act = 50
 	}
+	if g.pv_act <= 0 {
+		fmt.Printf(" %s est mort (;;)\n", g.name)
+	}
 }
 
 // Poison Potion
-func poisonPot(c *character) {
+func poisonPot(c *character, g *monster) {
+	if g == nil {
+		fmt.Println("⚠️ Impossible d’utiliser une potion de poison sans ennemi.")
+		return
+	}
+
 	for i := 0; i < len(c.inventaire); i++ {
 		if c.inventaire[i] == "Potion de poison" {
 			// Consomme la potion
 			removeInventory(c, "Potion de poison")
 			// boucle timer 3sec
+			fmt.Printf("Vous utilisez Potion de poison")
 			for i := 0; i < 3; i++ {
 				time.Sleep(1 * time.Second)
-				c.pv_act -= 10
-				fmt.Printf("Dégâts de poison ! PV : %d / %d\n", c.pv_act, c.pv_max)
-				//si pv =0 le perso meurt
-				if c.pv_act == 0 {
-					Wasted(c)
+				g.pv_act -= 10
+				fmt.Printf("Dégâts de poison ! PV : %d / %d\n", g.pv_act, g.pv_max)
+				//si pv = 0 le perso meurt
+				if g.pv_act == 0 {
+					Wasted(c, g)
 					break
 				}
+				fmt.Printf("%s à infligé 30 dégâts à %s ", c.name, g.name)
+				fmt.Printf("%s à %d / %d PV", g.name, g.pv_act, g.pv_max)
 			}
 
 		}
@@ -573,7 +582,7 @@ var prices = map[string]int{
 	"Peau de Troll":                7,
 	"Cuir de Sanglier":             3,
 	"Plume de Corbeau":             1,
-	"Pommes":                       1,
+	"Pomme":                        1,
 	"Petit Sac":                    5,
 	"Moyen Sac":                    10,
 	"Grand Sac":                    15,
@@ -587,7 +596,7 @@ var selling = map[string]int{
 	"Peau de Troll":                5,
 	"Cuir de Sanglier":             2,
 	"Plume de Corbeau":             1,
-	"Pommes":                       1,
+	"Pomme":                        1,
 }
 
 // Function for purchasing items
@@ -637,25 +646,31 @@ func characterCreation(c *character) {
 			c.race = "Humain"
 			c.pv_max = 100
 			c.pv_act = 50
-			fmt.Printf("Vous etes un Humain avec %d / %d PV \n", c.pv_act, c.pv_max)
+			c.niv = 1
+			c.skill[0] = "Coup de Poing"
+			fmt.Printf("Vous êtes un %s avec %d / %d PV (Niveau %d)\n", c.race, c.pv_act, c.pv_max, c.niv)
+			return
 		case 2:
 			c.race = "Elfe"
 			c.pv_max = 80
 			c.pv_act = 40
-			fmt.Printf("Vous etes un Elfe avec %d / %d PV \n", c.pv_act, c.pv_max)
+			c.niv = 1
+			c.skill[0] = "Coup de Poing"
+			fmt.Printf("Vous êtes un %s avec %d / %d PV (Niveau %d)\n", c.race, c.pv_act, c.pv_max, c.niv)
+			return
 		case 3:
 			c.race = "Nain"
 			c.pv_max = 120
 			c.pv_act = 60
-			fmt.Printf("Vous etes un Nain avec %d / %d PV \n", c.pv_act, c.pv_max)
+			c.niv = 1
+			c.skill[0] = "Coup de Poing"
+			fmt.Printf("Vous êtes un %s avec %d / %d PV (Niveau %d)\n", c.race, c.pv_act, c.pv_max, c.niv)
+			return
 		default:
 			fmt.Println("\n Choix Invalide, Veuillez réessayer")
+			continue
 		}
-		break
 	}
-	c.niv = 1
-	fmt.Printf("Vous etes de niveau 1\n")
-	c.skill[0] = "Coup de Poing,"
 }
 
 // Remove money of the inventory
@@ -739,6 +754,46 @@ func containsInventory(slice []string, item string) bool {
 	return false
 }
 
+func equipItem(c *character, item string) {
+	switch item {
+	case "Chapeau de paille":
+		if c.equipment.head[0] != "" { //Si un casque est déjà équipé il le remet dans l'inventaire
+			addInventory(c, c.equipment.head[0])
+			fmt.Printf("Vous avez enlever votre %s \n", c.equipment.head[0])
+		}
+		//equipe le casque
+		c.equipment.head[0] = item
+		removeInventory(c, item)
+		c.pv_max += 10
+		fmt.Println("✅ Vous avez équipé votre chapeau de paille (+10 PV)")
+
+	case "salopette":
+		if c.equipment.chest[0] != "" { //Si la tenue est déjà équipée il le remet dans l'inventaire
+			addInventory(c, c.equipment.chest[0])
+			fmt.Printf("Vous avez enlever votre %s \n", c.equipment.chest[0])
+		}
+		//equipe la salopette
+		c.equipment.chest[0] = item
+		removeInventory(c, item)
+		c.pv_max += 25
+		fmt.Println("✅ Vous avez équipé votre salopette (+25 PV)")
+
+	case "Bottes de pluie":
+		if c.equipment.legs[0] != "" { //Si les bottes sont déjà équipées il les remet dans l'inventaire
+			addInventory(c, c.equipment.legs[0])
+			fmt.Printf("Vous avez enlever votre %s \n", c.equipment.legs[0])
+		}
+		//equipe les bottes
+		c.equipment.legs[0] = item
+		removeInventory(c, item)
+		c.pv_max += 15
+		fmt.Println("✅ Vous avez équipé vos bottes (+15 PV)")
+
+	default:
+		fmt.Println("⚠️ Cet objet ne peut pas être équipé.")
+	}
+}
+
 // Goblin
 func initGoblin() monster {
 	return monster{name: "Gobelin d'entraînement", niv: 1, pv_max: 40, pv_act: 40, attack: 5}
@@ -769,5 +824,91 @@ func goblinPattern(c *character, g *monster, turn int) {
 	}
 	c.pv_act -= dmg
 	fmt.Printf("%s inflige à %s %d dégâts ! (%d/%d PV)\n", g.name, c.name, dmg, c.pv_act, c.pv_max)
-	Wasted(c)
+	Wasted(c, g)
+}
+
+// Training
+func trainingFight(c *character) {
+	g := initGoblin()
+	turn := 1
+	for c.pv_act > 0 && g.pv_act > 0 {
+		fmt.Printf("\n--- Tour %d ---\n", turn)
+		characterTurn(c, &g)
+		if g.pv_act <= 0 {
+			fmt.Println("Victoire ! Le goblin est vaincu.")
+			break
+		}
+		goblinPattern(c, &g, turn)
+		if c.pv_act <= 0 {
+			fmt.Println("Défaite ! Vous avez été vaincu.")
+			break
+		}
+		turn++
+	}
+}
+
+func characterTurn(c *character, g *monster) {
+	for {
+		fmt.Println(" \n ☠  MENU COMBAT ☠ \n ")
+		fmt.Println("1. Menu")
+		fmt.Println("2. Attaquer")
+		fmt.Println("3. Inventaire ")
+		fmt.Println("4. QUITTER")
+
+		var choice int
+		fmt.Println("Votre choix")
+		fmt.Scan(&choice)
+		var new_choice int
+
+		switch choice {
+		case 1:
+			//menu
+		case 2:
+			var attack int
+			fmt.Println("Quelle attaque souhaitez vous utiliser ?")
+			for i, s := range c.skill {
+				if s != "" {
+					fmt.Printf("%d. %s\n", i+1, s)
+				}
+			}
+			fmt.Scan(&attack)
+
+			switch attack {
+			case 1:
+				fmt.Printf("%s", c.skill[0])
+				g.pv_act = g.pv_act - 8
+			case 2:
+				fmt.Printf("%s", c.skill[1])
+				g.pv_act = g.pv_act - 18
+			case 3:
+				fmt.Printf("%s", c.skill[2])
+				g.pv_act = g.pv_act - 0
+			case 4:
+				fmt.Printf("%s", c.skill[3])
+				g.pv_act = g.pv_act - 0
+			case 5:
+				fmt.Printf("%s", c.skill[4])
+				g.pv_act = g.pv_act - 0
+			}
+		case 3:
+			for {
+				fmt.Println("\n ✧ Inventaire ✧ \n ")
+				accessInventory(*c)
+				fmt.Println("\n 999. Utiliser Potion ")
+				fmt.Println("\n 111. Utiliser Potion de poison ")
+				fmt.Println(" 0. Retour")
+				fmt.Println(" Votre choix")
+				fmt.Scan(&new_choice)
+				switch new_choice {
+				case 999:
+					takePot(c)
+				case 111:
+					poisonPot(c, g)
+				}
+				if new_choice == 0 {
+					break
+				}
+			}
+		}
+	}
 }

@@ -89,7 +89,17 @@ func initCharacter(nom, sexe, classe, race string, niveau, pv_max, pv_act int, i
 // =======================
 func characterCreation(c *character) {
 	var name string
-	fmt.Println("Bienvenue dans 🌱🐾 Seed & Claws")
+
+	fmt.Println("\nBienvenue dans 🌱🐾")
+
+	fmt.Println(" _______  _______  _______  ______     _______  __    _  ______     _______  ___      _______  _     _  _______ ")
+	fmt.Println("|       ||       ||       ||      |   |   _   ||  |  | ||      |   |       ||   |    |   _   || | _ | ||       |")
+	fmt.Println("|  _____||    ___||    ___||  _    |  |  |_|  ||   |_| ||  _    |  |       ||   |    |  |_|  || || || ||  _____|")
+	fmt.Println("| |_____ |   |___ |   |___ | | |   |  |       ||       || | |   |  |       ||   |    |       ||       || |_____ ")
+	fmt.Println("|_____  ||    ___||    ___|| |_|   |  |       ||  _    || |_|   |  |      _||   |___ |       ||       ||_____  |")
+	fmt.Println(" _____| ||   |___ |   |___ |       |  |   _   || | |   ||       |  |     |_ |       ||   _   ||   _   | _____| |")
+	fmt.Println("|_______||_______||_______||______|   |__| |__||_|  |__||______|   |_______||_______||__| |__||__| |__||_______|\n")
+
 	fmt.Println("Entrez votre Nom : ")
 	fmt.Scan(&name)
 	name = strings.ToLower(name)
@@ -98,7 +108,7 @@ func characterCreation(c *character) {
 
 	var race int
 	for {
-		fmt.Println("Choisissez votre race :")
+		fmt.Println("\n𓆩𓆪 Choisissez votre race 𓆩𓆪")
 		fmt.Println("1. Humain (100 PV)")
 		fmt.Println("2. Elfe (80 PV)")
 		fmt.Println("3. Nain (120 PV)")
@@ -110,7 +120,7 @@ func characterCreation(c *character) {
 			c.pv_act = 50
 			c.niv = 1
 			c.skill[0] = "Coup de Poing"
-			fmt.Printf("Vous êtes un %s avec %d / %d PV (Niveau %d)\n", c.race, c.pv_act, c.pv_max, c.niv)
+			fmt.Printf("----Vous êtes un %s avec %d / %d PV (Niveau %d)----\n", c.race, c.pv_act, c.pv_max, c.niv)
 			return
 		case 2:
 			c.race = "Elfe"
@@ -118,7 +128,7 @@ func characterCreation(c *character) {
 			c.pv_act = 40
 			c.niv = 1
 			c.skill[0] = "Coup de Poing"
-			fmt.Printf("Vous êtes un %s avec %d / %d PV (Niveau %d)\n", c.race, c.pv_act, c.pv_max, c.niv)
+			fmt.Printf("----Vous êtes un %s avec %d / %d PV (Niveau %d)----\n", c.race, c.pv_act, c.pv_max, c.niv)
 			return
 		case 3:
 			c.race = "Nain"
@@ -126,7 +136,7 @@ func characterCreation(c *character) {
 			c.pv_act = 60
 			c.niv = 1
 			c.skill[0] = "Coup de Poing"
-			fmt.Printf("Vous êtes un %s avec %d / %d PV (Niveau %d)\n", c.race, c.pv_act, c.pv_max, c.niv)
+			fmt.Printf("----Vous êtes un %s avec %d / %d PV (Niveau %d)----\n", c.race, c.pv_act, c.pv_max, c.niv)
 			return
 		default:
 			fmt.Println("Choix invalide, recommencez.")
@@ -139,14 +149,16 @@ func characterCreation(c *character) {
 // Affichage infos
 // =======================
 func displayInfo(c character) {
-	fmt.Println(" ✦ Nom ✦ 」", c.name)
-	fmt.Println("♀/♂", c.sexe)
-	fmt.Println("Race:", c.race)
-	fmt.Println("Niveau:", c.niv, "| Exp:", c.exp, "/", c.expMax)
-	fmt.Println("PV:", c.pv_act, "/", c.pv_max)
-	fmt.Println("Mana:", c.mana, "/", c.mana_max)
-	fmt.Println("Skill:", c.skill)
-	fmt.Println("Rubis:", c.money)
+	fmt.Println("╔══════════════════════════════════╗")
+	fmt.Printf("║ 「 ✦ %s ✦ 」\n", c.name)
+	fmt.Println("╟──────────────────────────────────╢")
+	fmt.Printf("║ Race    : %s\n", c.race)
+	fmt.Printf("║ Niveau  : %d | Exp: %d / %d\n", c.niv, c.exp, c.expMax)
+	fmt.Printf("║ PV      : %d / %d\n", c.pv_act, c.pv_max)
+	fmt.Printf("║ Mana    : %d / %d\n", c.mana, c.mana_max)
+	fmt.Printf("║ Skill   : %v\n", c.skill)
+	fmt.Printf("║ Rubis   : %d\n", c.money)
+	fmt.Println("╚══════════════════════════════════╝")
 }
 
 // =======================
@@ -162,7 +174,7 @@ func accessInventory(c character) {
 
 func addInventory(c *character, item string) {
 	if len(c.inventaire) >= c.maxInventory {
-		fmt.Println("⚠️ Inventaire plein, impossible d'ajouter l'objet.")
+		fmt.Println("⚠️ Inventaire plein, impossible d'ajouter l'objet.\n")
 		return
 	}
 	c.inventaire = append(c.inventaire, item)
@@ -190,7 +202,7 @@ func takePot(c *character) {
 		if c.pv_act > c.pv_max {
 			c.pv_act = c.pv_max
 		}
-		fmt.Printf("%s utilise une Potion de Soin ! PV : %d/%d\n", c.name, c.pv_act, c.pv_max)
+		fmt.Printf(" ♡ %s utilise une Potion de Soin ♡ ! PV : %d/%d \n", c.name, c.pv_act, c.pv_max)
 	} else {
 		fmt.Println("Vous n'avez pas de Potion de Soin.")
 	}
@@ -198,7 +210,7 @@ func takePot(c *character) {
 
 func poisonPot(c *character, g *monster) {
 	if g == nil {
-		fmt.Println("⚠️ Impossible d'utiliser une potion de poison sans ennemi.")
+		fmt.Println("⚠️ Impossible d'utiliser une potion de poison sans ennemi.\n")
 		return
 	}
 
@@ -209,7 +221,7 @@ func poisonPot(c *character, g *monster) {
 			for i := 0; i < 3; i++ {
 				time.Sleep(1 * time.Second)
 				g.pv_act -= 10
-				fmt.Printf("Dégâts de poison ! PV : %d / %d\n", g.pv_act, g.pv_max)
+				fmt.Printf(" 🧪 Dégâts de poison 🧪 ! PV : %d / %d\n", g.pv_act, g.pv_max)
 				if g.pv_act <= 0 {
 					Wasted(c, g)
 					break
@@ -229,9 +241,9 @@ func manaPot(c *character) {
 		if c.mana > c.mana_max {
 			c.mana = c.mana_max
 		}
-		fmt.Printf("%s boit une Potion de mana ! Mana : %d/%d\n", c.name, c.mana, c.mana_max)
+		fmt.Printf(" 🔮 %s boit une Potion de mana 🔮 ! Mana : %d/%d\n", c.name, c.mana, c.mana_max)
 	} else {
-		fmt.Println("Vous n'avez pas de Potion de mana.")
+		fmt.Println("Vous n'avez pas de Potion de mana.\n")
 	}
 }
 
@@ -240,12 +252,12 @@ func manaPot(c *character) {
 // =======================
 func Wasted(c *character, g *monster) {
 	if c.pv_act <= 0 {
-		fmt.Printf(" %s est mort (;;)\n", c.name)
+		fmt.Printf(" %s est mort (╥﹏╥)\n", c.name)
 		fmt.Printf("\n               ⸜(｡˃ ᵕ ˂ )⸝♡ \n \n %s a réssuscité avec 50pv \n", c.name)
 		c.pv_act = 50
 	}
 	if g.pv_act <= 0 {
-		fmt.Printf(" %s est mort (;;)\n", g.name)
+		fmt.Printf(" %s est mort (╥﹏╥) \n", g.name)
 	}
 }
 
@@ -290,7 +302,7 @@ func slimePattern(c *character, g *monster, turn int) {
 		dmg *= 2
 	}
 	c.pv_act -= dmg
-	fmt.Printf("%s inflige %d dégâts à %s ! (%d/%d PV)\n", g.name, dmg, c.name, c.pv_act, c.pv_max)
+	fmt.Printf(" ⚔️ %s inflige %d dégâts à %s ⚔️ ! (%d/%d PV)\n", g.name, dmg, c.name, c.pv_act, c.pv_max)
 	Wasted(c, g)
 }
 
@@ -304,28 +316,28 @@ func SlimeFight(c *character) {
 		if playerTurn {
 			characterTurn(c, &g)
 			if g.pv_act <= 0 {
-				fmt.Println("Victoire ! Le slime est vaincu.")
+				fmt.Println(" 🏆 Victoire 🏆 ! Le slime est vaincu.")
 				c.exp += g.expReward
-				fmt.Printf("Vous gagnez %d XP !\n", g.expReward)
+				fmt.Printf(" 🖤 Vous gagnez %d XP 🖤 !\n", g.expReward)
 				levelUp(c)
 				break
 			}
 			slimePattern(c, &g, turn)
 			if c.pv_act <= 0 {
-				fmt.Println("Défaite ! Vous avez été vaincu.")
+				fmt.Println(" ಥ‿ಥ Défaite ! Vous avez été vaincu. ಥ‿ಥ ")
 				break
 			}
 		} else {
 			slimePattern(c, &g, turn)
 			if c.pv_act <= 0 {
-				fmt.Println("Défaite ! Vous avez été vaincu.")
+				fmt.Println(" ಥ‿ಥ Défaite ! Vous avez été vaincu. ಥ‿ಥ ")
 				break
 			}
 			characterTurn(c, &g)
 			if g.pv_act <= 0 {
-				fmt.Println("Victoire ! Le slime est vaincu.")
+				fmt.Println(" 🏆 Victoire 🏆 ! Le slime est vaincu.")
 				c.exp += g.expReward
-				fmt.Printf("Vous gagnez %d XP !\n", g.expReward)
+				fmt.Printf(" 🖤 Vous gagnez %d XP 🖤 !\n", g.expReward)
 				levelUp(c)
 				break
 			}
@@ -353,7 +365,7 @@ func goblinPattern(c *character, g *monster, turn int) {
 		dmg *= 2
 	}
 	c.pv_act -= dmg
-	fmt.Printf("%s inflige %d dégâts à %s ! (%d/%d PV)\n", g.name, dmg, c.name, c.pv_act, c.pv_max)
+	fmt.Printf(" ⚔️ %s inflige %d dégâts à %s ⚔️ ! (%d/%d PV)\n", g.name, dmg, c.name, c.pv_act, c.pv_max)
 	Wasted(c, g)
 }
 
@@ -367,28 +379,28 @@ func GoblinFight(c *character) {
 		if playerTurn {
 			characterTurn(c, &g)
 			if g.pv_act <= 0 {
-				fmt.Println("Victoire ! Le gobelin est vaincu.")
+				fmt.Println(" 🏆 Victoire 🏆 ! Le gobelin est vaincu.")
 				c.exp += g.expReward
-				fmt.Printf("Vous gagnez %d XP !\n", g.expReward)
+				fmt.Printf(" 🖤 Vous gagnez %d XP 🖤 !\n", g.expReward)
 				levelUp(c)
 				break
 			}
 			goblinPattern(c, &g, turn)
 			if c.pv_act <= 0 {
-				fmt.Println("Défaite ! Vous avez été vaincu.")
+				fmt.Println(" ಥ‿ಥ Défaite ! Vous avez été vaincu. ಥ‿ಥ")
 				break
 			}
 		} else {
 			goblinPattern(c, &g, turn)
 			if c.pv_act <= 0 {
-				fmt.Println("Défaite ! Vous avez été vaincu.")
+				fmt.Println(" ಥ‿ಥ Défaite ! Vous avez été vaincu. ಥ‿ಥ ")
 				break
 			}
 			characterTurn(c, &g)
 			if g.pv_act <= 0 {
-				fmt.Println("Victoire ! Le gobelin est vaincu.")
+				fmt.Println(" 🏆 Victoire 🏆 ! Le gobelin est vaincu.")
 				c.exp += g.expReward
-				fmt.Printf("Vous gagnez %d XP !\n", g.expReward)
+				fmt.Printf(" 🖤 Vous gagnez %d XP 🖤 !\n", g.expReward)
 				levelUp(c)
 				break
 			}
@@ -416,7 +428,7 @@ func loupPattern(c *character, g *monster, turn int) {
 		dmg *= 2
 	}
 	c.pv_act -= dmg
-	fmt.Printf("%s inflige %d dégâts à %s ! (%d/%d PV)\n", g.name, dmg, c.name, c.pv_act, c.pv_max)
+	fmt.Printf(" ⚔️ %s inflige %d dégâts à %s ⚔️ ! (%d/%d PV)\n", g.name, dmg, c.name, c.pv_act, c.pv_max)
 	Wasted(c, g)
 }
 
@@ -430,28 +442,28 @@ func LoupFight(c *character) {
 		if playerTurn {
 			characterTurn(c, &g)
 			if g.pv_act <= 0 {
-				fmt.Println("Victoire ! Le loup est vaincu.")
+				fmt.Println(" 🏆 Victoire 🏆 ! Le loup est vaincu.")
 				c.exp += g.expReward
-				fmt.Printf("Vous gagnez %d XP !\n", g.expReward)
+				fmt.Printf(" 🖤 Vous gagnez %d XP 🖤 !\n", g.expReward)
 				levelUp(c)
 				break
 			}
 			loupPattern(c, &g, turn)
 			if c.pv_act <= 0 {
-				fmt.Println("Défaite ! Vous avez été vaincu.")
+				fmt.Println(" ಥ‿ಥ Défaite ! Vous avez été vaincu. ಥ‿ಥ")
 				break
 			}
 		} else {
 			loupPattern(c, &g, turn)
 			if c.pv_act <= 0 {
-				fmt.Println("Défaite ! Vous avez été vaincu.")
+				fmt.Println(" ಥ‿ಥ Défaite ! Vous avez été vaincu. ಥ‿ಥ ")
 				break
 			}
 			characterTurn(c, &g)
 			if g.pv_act <= 0 {
-				fmt.Println("Victoire ! Le loup est vaincu.")
+				fmt.Println(" 🏆 Victoire 🏆 ! Le loup est vaincu.")
 				c.exp += g.expReward
-				fmt.Printf("Vous gagnez %d XP !\n", g.expReward)
+				fmt.Printf(" 🖤 Vous gagnez %d XP 🖤 !\n", g.expReward)
 				levelUp(c)
 				break
 			}
@@ -479,7 +491,7 @@ func trollPattern(c *character, g *monster, turn int) {
 		dmg *= 2
 	}
 	c.pv_act -= dmg
-	fmt.Printf("%s inflige %d dégâts à %s ! (%d/%d PV)\n", g.name, dmg, c.name, c.pv_act, c.pv_max)
+	fmt.Printf(" ⚔️ %s inflige %d dégâts à %s ⚔️ ! (%d/%d PV)\n", g.name, dmg, c.name, c.pv_act, c.pv_max)
 	Wasted(c, g)
 }
 
@@ -493,28 +505,28 @@ func TrollFight(c *character) {
 		if playerTurn {
 			characterTurn(c, &g)
 			if g.pv_act <= 0 {
-				fmt.Println("Victoire ! Le troll est vaincu.")
+				fmt.Println(" 🏆 Victoire 🏆 ! Le troll est vaincu.")
 				c.exp += g.expReward
-				fmt.Printf("Vous gagnez %d XP !\n", g.expReward)
+				fmt.Printf(" 🖤 Vous gagnez %d XP 🖤 !\n", g.expReward)
 				levelUp(c)
 				break
 			}
 			trollPattern(c, &g, turn)
 			if c.pv_act <= 0 {
-				fmt.Println("Défaite ! Vous avez été vaincu.")
+				fmt.Println(" ಥ‿ಥ Défaite ಥ‿ಥ ! Vous avez été vaincu.")
 				break
 			}
 		} else {
 			trollPattern(c, &g, turn)
 			if c.pv_act <= 0 {
-				fmt.Println("Défaite ! Vous avez été vaincu.")
+				fmt.Println(" ಥ‿ಥ Défaite ಥ‿ಥ ! Vous avez été vaincu.")
 				break
 			}
 			characterTurn(c, &g)
 			if g.pv_act <= 0 {
-				fmt.Println("Victoire ! Le troll est vaincu.")
+				fmt.Println(" 🏆 Victoire 🏆 ! Le troll est vaincu.")
 				c.exp += g.expReward
-				fmt.Printf("Vous gagnez %d XP !\n", g.expReward)
+				fmt.Printf(" 🖤 Vous gagnez %d XP 🖤 !\n", g.expReward)
 				levelUp(c)
 				break
 			}
@@ -526,10 +538,13 @@ func TrollFight(c *character) {
 // ----- Combat -------
 func characterTurn(c *character, g *monster) {
 	for {
-		fmt.Println(" \n ☠  MENU COMBAT ☠ \n ")
-		fmt.Println("1. Attaquer")
-		fmt.Println("2. Inventaire")
-		fmt.Println("3. FUIR")
+		fmt.Println("╔════════════════════════════╗")
+		fmt.Println("║      ☠  MENU COMBAT ☠      ║")
+		fmt.Println("╟────────────────────────────╢")
+		fmt.Println("║ 1. Attaquer                ║")
+		fmt.Println("║ 2. Inventaire              ║")
+		fmt.Println("║ 3. Fuir                    ║")
+		fmt.Println("╚════════════════════════════╝")
 
 		var choice int
 		fmt.Println("Votre choix")

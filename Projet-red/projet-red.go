@@ -317,7 +317,10 @@ func SlimeFight(c *character) {
 	for c.pv_act > 0 && g.pv_act > 0 {
 		fmt.Printf("\n--- Tour %d ---\n", turn)
 		if playerTurn {
-			characterTurn(c, &g)
+			if characterTurn(c, &g) {
+				Interface(c)
+				return
+			}
 			if g.pv_act <= 0 {
 				fmt.Println("Victoire ! Le slime est vaincu.")
 				c.exp += g.expReward
@@ -338,7 +341,10 @@ func SlimeFight(c *character) {
 				fmt.Println("Défaite ! Vous avez été vaincu.")
 				break
 			}
-			characterTurn(c, &g)
+			if characterTurn(c, &g) {
+				Interface(c)
+				return
+			}
 			if g.pv_act <= 0 {
 				fmt.Println("Victoire ! Le slime est vaincu.")
 				c.exp += g.expReward
@@ -386,7 +392,10 @@ func GoblinFight(c *character) {
 	for c.pv_act > 0 && g.pv_act > 0 {
 		fmt.Printf("\n--- Tour %d ---\n", turn)
 		if playerTurn {
-			characterTurn(c, &g)
+			if characterTurn(c, &g) {
+				Interface(c)
+				return
+			}
 			if g.pv_act <= 0 {
 				fmt.Println("Victoire ! Le gobelin est vaincu.")
 				c.exp += g.expReward
@@ -409,7 +418,10 @@ func GoblinFight(c *character) {
 				fmt.Println("Défaite ! Vous avez été vaincu.")
 				break
 			}
-			characterTurn(c, &g)
+			if characterTurn(c, &g) {
+				Interface(c)
+				return
+			}
 			if g.pv_act <= 0 {
 				fmt.Println("Victoire ! Le gobelin est vaincu.")
 				c.exp += g.expReward
@@ -459,7 +471,10 @@ func SanglierFight(c *character) {
 	for c.pv_act > 0 && g.pv_act > 0 {
 		fmt.Printf("\n--- Tour %d ---\n", turn)
 		if playerTurn {
-			characterTurn(c, &g)
+			if characterTurn(c, &g) {
+				Interface(c)
+				return
+			}
 			if g.pv_act <= 0 {
 				fmt.Println("Victoire ! Le sanglier est vaincu.")
 				c.exp += g.expReward
@@ -482,7 +497,10 @@ func SanglierFight(c *character) {
 				fmt.Println("Défaite ! Vous avez été vaincu.")
 				break
 			}
-			characterTurn(c, &g)
+			if characterTurn(c, &g) {
+				Interface(c)
+				return
+			}
 			if g.pv_act <= 0 {
 				fmt.Println("Victoire ! Le sanglier est vaincu.")
 				c.exp += g.expReward
@@ -532,7 +550,10 @@ func LoupFight(c *character) {
 	for c.pv_act > 0 && g.pv_act > 0 {
 		fmt.Printf("\n--- Tour %d ---\n", turn)
 		if playerTurn {
-			characterTurn(c, &g)
+			if characterTurn(c, &g) {
+				Interface(c)
+				return
+			}
 			if g.pv_act <= 0 {
 				fmt.Println("Victoire ! Le loup est vaincu.")
 				c.exp += g.expReward
@@ -555,7 +576,10 @@ func LoupFight(c *character) {
 				fmt.Println("Défaite ! Vous avez été vaincu.")
 				break
 			}
-			characterTurn(c, &g)
+			if characterTurn(c, &g) {
+				Interface(c)
+				return
+			}
 			if g.pv_act <= 0 {
 				fmt.Println("Victoire ! Le loup est vaincu.")
 				c.exp += g.expReward
@@ -605,7 +629,10 @@ func TrollFight(c *character) {
 	for c.pv_act > 0 && g.pv_act > 0 {
 		fmt.Printf("\n--- Tour %d ---\n", turn)
 		if playerTurn {
-			characterTurn(c, &g)
+			if characterTurn(c, &g) {
+				Interface(c)
+				return
+			}
 			if g.pv_act <= 0 {
 				fmt.Println("Victoire ! Le troll est vaincu.")
 				c.exp += g.expReward
@@ -628,7 +655,10 @@ func TrollFight(c *character) {
 				fmt.Println("Défaite ! Vous avez été vaincu.")
 				break
 			}
-			characterTurn(c, &g)
+			if characterTurn(c, &g) {
+				Interface(c)
+				return
+			}
 			if g.pv_act <= 0 {
 				fmt.Println("Victoire ! Le troll est vaincu.")
 				c.exp += g.expReward
@@ -646,7 +676,7 @@ func TrollFight(c *character) {
 }
 
 // ----- Tour par tour -------
-func characterTurn(c *character, g *monster) {
+func characterTurn(c *character, g *monster) bool {
 	for {
 		fmt.Println(" \n ☠  MENU COMBAT ☠ \n ")
 		fmt.Println("1. Attaquer")
@@ -661,6 +691,7 @@ func characterTurn(c *character, g *monster) {
 		switch choice {
 		case 1:
 			var attack int
+			fmt.Println(" 0. Retour")
 			fmt.Println("Quelle attaque souhaitez vous utiliser ?")
 			for i, s := range c.skill {
 				if s != "" {
@@ -671,32 +702,32 @@ func characterTurn(c *character, g *monster) {
 
 			switch attack {
 			case 1:
-				fmt.Printf("%s\n", c.skill[0])
 				g.pv_act = g.pv_act - 8
-				return
+				fmt.Printf("%s utilise %s et inflige 8 dégâts : %s à %d/%d PV\n", c.name, c.skill[0], g.name, g.pv_act, g.pv_max)
+				return false
 			case 2:
 				if c.skill[1] != "" {
-					fmt.Printf("%s\n", c.skill[1])
 					g.pv_act = g.pv_act - 18
-					return
+					fmt.Printf("%s utilise %s et inflige 18 dégâts : %s à %d/%d PV\n", c.name, c.skill[1], g.name, g.pv_act, g.pv_max)
+					return false
 				}
 			case 3:
 				if c.skill[2] != "" {
-					fmt.Printf("%s\n", c.skill[2])
 					g.pv_act = g.pv_act - 25
-					return
+					fmt.Printf("%s utilise %s et inflige 25 dégâts : %s à %d/%d PV\n", c.name, c.skill[2], g.name, g.pv_act, g.pv_max)
+					return false
 				}
 			case 4:
 				if c.skill[3] != "" {
-					fmt.Printf("%s\n", c.skill[3])
 					g.pv_act = g.pv_act - 30
-					return
+					fmt.Printf("%s utilise %s et inflige 30 dégâts : %s à %d/%d PV\n", c.name, c.skill[3], g.name, g.pv_act, g.pv_max)
+					return false
 				}
 			case 5:
 				if c.skill[4] != "" {
-					fmt.Printf("%s\n", c.skill[4])
 					g.pv_act = g.pv_act - 35
-					return
+					fmt.Printf("%s utilise %s et inflige 35 dégâts : %s à %d/%d PV\n", c.name, c.skill[4], g.name, g.pv_act, g.pv_max)
+					return false
 				}
 			default:
 				fmt.Println("Choix invalide")
@@ -714,13 +745,13 @@ func characterTurn(c *character, g *monster) {
 				switch new_choice {
 				case 999:
 					takePot(c)
-					return
+					return false
 				case 111:
 					poisonPot(c, g)
-					return
+					return false
 				case 222:
 					manaPot(c)
-					return
+					return false
 				}
 				if new_choice == 0 {
 					break
@@ -728,7 +759,7 @@ func characterTurn(c *character, g *monster) {
 			}
 		case 3:
 			fmt.Println("Fuite du combat !")
-			return
+			return true
 		}
 	}
 }
@@ -766,7 +797,7 @@ func exploration(c *character) {
 // Level up
 // =======================
 func levelUp(c *character) {
-	if c.exp >= c.expMax {
+	for c.exp >= c.expMax {
 		c.niv++
 		c.exp -= c.expMax
 		c.expMax += 20
@@ -897,24 +928,18 @@ func Interface(c *character) {
 						for i := 0; i < len(c.inventaire); i++ {
 							if c.inventaire[i] == "Chapeau de paille" {
 								equipItem(c, "Chapeau de paille")
-								removeInventory(c, "Chapeau de paille")
-
 							}
 						}
 					case 2:
 						for i := 0; i < len(c.inventaire); i++ {
 							if c.inventaire[i] == "Salopette" {
 								equipItem(c, "Salopette")
-								removeInventory(c, "Salopette")
-
 							}
 						}
 					case 3:
 						for i := 0; i < len(c.inventaire); i++ {
 							if c.inventaire[i] == "Bottes de pluie" {
 								equipItem(c, "Bottes de pluie")
-								removeInventory(c, "Bottes de pluie")
-
 							}
 						}
 					default:
@@ -931,7 +956,8 @@ func Interface(c *character) {
 							if c.inventaire[i] == "Petit sac" {
 								upgradeInventorySlot(c, "Petit sac")
 								removeInventory(c, "Petit sac")
-
+							} else {
+								fmt.Println("Vous n'avez pas l'objet")
 							}
 						}
 					case 2:
@@ -939,7 +965,8 @@ func Interface(c *character) {
 							if c.inventaire[i] == "Moyen sac" {
 								upgradeInventorySlot(c, "Moyen sac")
 								removeInventory(c, "Moyen sac")
-
+							} else {
+								fmt.Println("Vous n'avez pas l'objet")
 							}
 						}
 					case 3:
@@ -947,7 +974,8 @@ func Interface(c *character) {
 							if c.inventaire[i] == "Grand sac" {
 								upgradeInventorySlot(c, "Grand sac")
 								removeInventory(c, "Grand sac")
-
+							} else {
+								fmt.Println("Vous n'avez pas l'objet")
 							}
 						}
 					}
@@ -960,7 +988,8 @@ func Interface(c *character) {
 							if c.inventaire[i] == "Livre de sort : Boule de feu" {
 								spellBook(c, "Boule de feu")
 								removeInventory(c, "Livre de sort : Boule de feu")
-
+							} else {
+								fmt.Println("Vous n'avez pas l'objet")
 							}
 						}
 					case 2:
@@ -968,7 +997,8 @@ func Interface(c *character) {
 							if c.inventaire[i] == "Livre de sort : Projectile en pierre" {
 								spellBook(c, "Projectile en Pierre")
 								removeInventory(c, "Livre de sort : Projectile en pierre")
-								break
+							} else {
+								fmt.Println("Vous n'avez pas l'objet")
 							}
 						}
 					case 3:
@@ -976,7 +1006,8 @@ func Interface(c *character) {
 							if c.inventaire[i] == "Livre de sort : Lame de Vent" {
 								spellBook(c, "Lame de Vent")
 								removeInventory(c, "Livre de sort : Lame de Vent")
-								break
+							} else {
+								fmt.Println("Vous n'avez pas l'objet")
 							}
 						}
 					case 4:
@@ -984,7 +1015,8 @@ func Interface(c *character) {
 							if c.inventaire[i] == "Livre de sort : Canon à eau" {
 								spellBook(c, "Canon à eau")
 								removeInventory(c, "Livre de sort : Canon à eau")
-								break
+							} else {
+								fmt.Println("Vous n'avez pas l'objet")
 							}
 						}
 					}
@@ -1026,6 +1058,7 @@ func Interface(c *character) {
 			}
 		case 5:
 			exploration(c)
+			break
 		case 6:
 			fmt.Println("🎶 📖 Réponse Mission 6 : ABBA (Mamma Mia, Gimme! Gimme! Gimme!, etc.)\n 			  Steven Spielberg (Ready Player One)")
 		case 7:

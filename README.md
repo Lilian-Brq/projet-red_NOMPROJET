@@ -32,13 +32,6 @@ Le jeu reprend les mécaniques classiques d'un RPG :
     - Elfe -> 80 PV max
     - Nain -> 120 PV max
 - Choix du **sexe** : Masculin / Féminin
-- Choix de la **classe** : 
-    - Guerrier (Boost dégâts de mêlée)
-    - Mage (Boost aptitude à la magie)
-    - Assassin (Boost discrétion et vitesse)
-    - Forgeron (Boost création armes et équipements)
-    - Marchand (Boost négociation PNJ)
-    - Alchimiste (Boost craft potions)
 
 ---
 

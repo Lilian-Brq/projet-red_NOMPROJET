@@ -232,6 +232,8 @@ func poisonPot(c *character, g *monster) {
 				fmt.Printf("%s à %d / %d PV", g.name, g.pv_act, g.pv_max)
 			}
 			return
+		} else {
+			fmt.Println("Vous n'avez pas de Potion de mana.\n ")
 		}
 	}
 }
@@ -318,7 +320,6 @@ func SlimeFight(c *character) {
 		fmt.Printf("\n--- Tour %d ---\n", turn)
 		if playerTurn {
 			if characterTurn(c, &g) {
-				Interface(c)
 				return
 			}
 			if g.pv_act <= 0 {
@@ -342,7 +343,6 @@ func SlimeFight(c *character) {
 				break
 			}
 			if characterTurn(c, &g) {
-				Interface(c)
 				return
 			}
 			if g.pv_act <= 0 {
@@ -393,7 +393,6 @@ func GoblinFight(c *character) {
 		fmt.Printf("\n--- Tour %d ---\n", turn)
 		if playerTurn {
 			if characterTurn(c, &g) {
-				Interface(c)
 				return
 			}
 			if g.pv_act <= 0 {
@@ -419,7 +418,6 @@ func GoblinFight(c *character) {
 				break
 			}
 			if characterTurn(c, &g) {
-				Interface(c)
 				return
 			}
 			if g.pv_act <= 0 {
@@ -472,7 +470,6 @@ func SanglierFight(c *character) {
 		fmt.Printf("\n--- Tour %d ---\n", turn)
 		if playerTurn {
 			if characterTurn(c, &g) {
-				Interface(c)
 				return
 			}
 			if g.pv_act <= 0 {
@@ -498,7 +495,6 @@ func SanglierFight(c *character) {
 				break
 			}
 			if characterTurn(c, &g) {
-				Interface(c)
 				return
 			}
 			if g.pv_act <= 0 {
@@ -528,7 +524,7 @@ func initLoup() monster {
 		initiative:  6,
 		expReward:   70,
 		moneyReward: 70,
-		loot:        "Foururre de Loup",
+		loot:        "Fourrure de Loup",
 	}
 }
 
@@ -551,7 +547,6 @@ func LoupFight(c *character) {
 		fmt.Printf("\n--- Tour %d ---\n", turn)
 		if playerTurn {
 			if characterTurn(c, &g) {
-				Interface(c)
 				return
 			}
 			if g.pv_act <= 0 {
@@ -577,7 +572,6 @@ func LoupFight(c *character) {
 				break
 			}
 			if characterTurn(c, &g) {
-				Interface(c)
 				return
 			}
 			if g.pv_act <= 0 {
@@ -630,7 +624,6 @@ func TrollFight(c *character) {
 		fmt.Printf("\n--- Tour %d ---\n", turn)
 		if playerTurn {
 			if characterTurn(c, &g) {
-				Interface(c)
 				return
 			}
 			if g.pv_act <= 0 {
@@ -656,7 +649,6 @@ func TrollFight(c *character) {
 				break
 			}
 			if characterTurn(c, &g) {
-				Interface(c)
 				return
 			}
 			if g.pv_act <= 0 {
@@ -985,38 +977,42 @@ func Interface(c *character) {
 					switch new_choice {
 					case 1:
 						for i := 0; i < len(c.inventaire); i++ {
+							if c.inventaire[i] != "Livre de sort : Projectile en pierre" {
+								fmt.Println("Vous n'avez pas l'objet")
+							}
 							if c.inventaire[i] == "Livre de sort : Boule de feu" {
 								spellBook(c, "Boule de feu")
 								removeInventory(c, "Livre de sort : Boule de feu")
-							} else {
-								fmt.Println("Vous n'avez pas l'objet")
 							}
 						}
 					case 2:
 						for i := 0; i < len(c.inventaire); i++ {
+							if c.inventaire[i] != "Livre de sort : Projectile en pierre" {
+								fmt.Println("Vous n'avez pas l'objet")
+							}
 							if c.inventaire[i] == "Livre de sort : Projectile en pierre" {
 								spellBook(c, "Projectile en Pierre")
 								removeInventory(c, "Livre de sort : Projectile en pierre")
-							} else {
-								fmt.Println("Vous n'avez pas l'objet")
 							}
 						}
 					case 3:
 						for i := 0; i < len(c.inventaire); i++ {
+							if c.inventaire[i] != "Livre de sort : Projectile en pierre" {
+								fmt.Println("Vous n'avez pas l'objet")
+							}
 							if c.inventaire[i] == "Livre de sort : Lame de Vent" {
 								spellBook(c, "Lame de Vent")
 								removeInventory(c, "Livre de sort : Lame de Vent")
-							} else {
-								fmt.Println("Vous n'avez pas l'objet")
 							}
 						}
 					case 4:
 						for i := 0; i < len(c.inventaire); i++ {
+							if c.inventaire[i] != "Livre de sort : Projectile en pierre" {
+								fmt.Println("Vous n'avez pas l'objet")
+							}
 							if c.inventaire[i] == "Livre de sort : Canon à eau" {
 								spellBook(c, "Canon à eau")
 								removeInventory(c, "Livre de sort : Canon à eau")
-							} else {
-								fmt.Println("Vous n'avez pas l'objet")
 							}
 						}
 					}
@@ -1058,7 +1054,6 @@ func Interface(c *character) {
 			}
 		case 5:
 			exploration(c)
-			break
 		case 6:
 			fmt.Println("🎶 📖 Réponse Mission 6 : ABBA (Mamma Mia, Gimme! Gimme! Gimme!, etc.)\n 			  Steven Spielberg (Ready Player One)")
 		case 7:

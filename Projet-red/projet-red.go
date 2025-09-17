@@ -556,7 +556,7 @@ func LoupFight(c *character) {
 				addInventory(c, g.loot)
 				fmt.Printf("🖤 Vous gagnez %d XP 🖤 !\n", g.expReward)
 				fmt.Printf("💵 Vous gagnez %d Rubis 💵 !\n", g.moneyReward)
-				fmt.Println("Vous obtenez une foururre de loup.")
+				fmt.Println("Vous obtenez une Fourrure de loup.")
 				levelUp(c)
 				break
 			}
@@ -581,7 +581,7 @@ func LoupFight(c *character) {
 				addInventory(c, g.loot)
 				fmt.Printf("🖤 Vous gagnez %d XP 🖤 !\n", g.expReward)
 				fmt.Printf("💵 Vous gagnez %d Rubis 💵 !\n", g.moneyReward)
-				fmt.Println("Vous obtenez une foururre de loup.")
+				fmt.Println("Vous obtenez une Fourrure de loup.")
 				levelUp(c)
 				break
 			}
@@ -1167,7 +1167,7 @@ func merchantMenu(c *character) {
 				fmt.Println(" 3. Paille : 					6 Rubis")
 				fmt.Println(" 4. Cuir de Sanglier : 				20 Rubis")
 				fmt.Println(" 5. Plume de Corbeau : 				1 Rubis")
-				fmt.Println(" 6. Fourure de Loup : 				35 Rubis")
+				fmt.Println(" 6. Fourrure de Loup : 				35 Rubis")
 				fmt.Println(" 7. Peau de Troll : 				40 Rubis")
 				fmt.Println(" 8. Potion de Soin: 				10 Rubis")
 				fmt.Println(" 9. Potion de Poison : 				15 Rubis\n ")
@@ -1196,7 +1196,7 @@ func merchantMenu(c *character) {
 				case 5:
 					purchase(c, "Plume de Corbeau")
 				case 6:
-					purchase(c, "Fourure de Loup")
+					purchase(c, "Fourrure de Loup")
 				case 7:
 					purchase(c, "Peau de Troll")
 				case 8:
@@ -1234,7 +1234,7 @@ func merchantMenu(c *character) {
 				fmt.Println(" 3. Paille : 					4 Rubis")
 				fmt.Println(" 4. Cuir de Sanglier : 				15 Rubis")
 				fmt.Println(" 5. Plume de Corbeau : 				1 Rubis")
-				fmt.Println(" 6. Fourure de Loup : 				28 Rubis")
+				fmt.Println(" 6. Fourrure de Loup : 				28 Rubis")
 				fmt.Println(" 7. Peau de Troll : 				35 Rubis")
 				fmt.Println(" 8. Potion de Soin: 				7 Rubis")
 				fmt.Println(" 9. Potion de Poison : 				12 Rubis\n ")
@@ -1263,7 +1263,7 @@ func merchantMenu(c *character) {
 				case 5:
 					sell(c, "Plume de Corbeau")
 				case 6:
-					sell(c, "Fourure de Loup")
+					sell(c, "Fourrure de Loup")
 				case 7:
 					sell(c, "Peau de Troll")
 				case 8:

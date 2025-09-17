@@ -9,7 +9,7 @@ import (
 
 func main() {
 	// Création du personnage
-	c1 := initCharacter("", "", "", "", 0, 0, 0, []string{"Potion de Soin"}, [5]string{}, 100)
+	c1 := initCharacter("", "", "", 0, 0, 0, []string{"Potion de Soin"}, [5]string{}, 100)
 	characterCreation(&c1)
 
 	// Menu principal
@@ -46,13 +46,15 @@ type equipment struct {
 }
 
 type monster struct {
-	name       string
-	niv        int
-	pv_max     int
-	pv_act     int
-	attack     int
-	initiative int
-	expReward  int
+	name        string
+	niv         int
+	pv_max      int
+	pv_act      int
+	attack      int
+	initiative  int
+	expReward   int
+	moneyReward int
+	loot        string
 }
 
 type monsterEntry struct {
@@ -64,7 +66,7 @@ type monsterEntry struct {
 // =======================
 // Initialisation perso
 // =======================
-func initCharacter(nom, sexe, classe, race string, niveau, pv_max, pv_act int, inventaire []string, skill [5]string, monnaie int) character {
+func initCharacter(nom, sexe, race string, niveau, pv_max, pv_act int, inventaire []string, skill [5]string, monnaie int) character {
 	return character{
 		name:         nom,
 		sexe:         sexe,
@@ -98,7 +100,7 @@ func characterCreation(c *character) {
 	fmt.Println("| |_____ |   |___ |   |___ | | |   |  |       ||       || | |   |  |       ||   |    |       ||       || |_____ ")
 	fmt.Println("|_____  ||    ___||    ___|| |_|   |  |       ||  _    || |_|   |  |      _||   |___ |       ||       ||_____  |")
 	fmt.Println(" _____| ||   |___ |   |___ |       |  |   _   || | |   ||       |  |     |_ |       ||   _   ||   _   | _____| |")
-	fmt.Println("|_______||_______||_______||______|   |__| |__||_|  |__||______|   |_______||_______||__| |__||__| |__||_______|\n")
+	fmt.Println("|_______||_______||_______||______|   |__| |__||_|  |__||______|   |_______||_______||__| |__||__| |__||_______|\n ")
 
 	fmt.Println("Entrez votre Nom : ")
 	fmt.Scan(&name)
@@ -174,7 +176,7 @@ func accessInventory(c character) {
 
 func addInventory(c *character, item string) {
 	if len(c.inventaire) >= c.maxInventory {
-		fmt.Println("⚠️ Inventaire plein, impossible d'ajouter l'objet.\n")
+		fmt.Println("⚠️ Inventaire plein, impossible d'ajouter l'objet.\n ")
 		return
 	}
 	c.inventaire = append(c.inventaire, item)
@@ -210,7 +212,7 @@ func takePot(c *character) {
 
 func poisonPot(c *character, g *monster) {
 	if g == nil {
-		fmt.Println("⚠️ Impossible d'utiliser une potion de poison sans ennemi.\n")
+		fmt.Println("⚠️ Impossible d'utiliser une potion de poison sans ennemi.\n ")
 		return
 	}
 
@@ -243,7 +245,7 @@ func manaPot(c *character) {
 		}
 		fmt.Printf(" 🔮 %s boit une Potion de mana 🔮 ! Mana : %d/%d\n", c.name, c.mana, c.mana_max)
 	} else {
-		fmt.Println("Vous n'avez pas de Potion de mana.\n")
+		fmt.Println("Vous n'avez pas de Potion de mana.\n ")
 	}
 }
 
@@ -286,13 +288,14 @@ func spellBook(c *character, sort string) {
 // ------- Slime -------
 func initSlime() monster {
 	return monster{
-		name:       "Slime",
-		niv:        3,
-		pv_max:     40,
-		pv_act:     40,
-		attack:     4,
-		initiative: 6,
-		expReward:  10,
+		name:        "Slime",
+		niv:         3,
+		pv_max:      40,
+		pv_act:      40,
+		attack:      4,
+		initiative:  6,
+		expReward:   10,
+		moneyReward: 10,
 	}
 }
 
@@ -302,7 +305,7 @@ func slimePattern(c *character, g *monster, turn int) {
 		dmg *= 2
 	}
 	c.pv_act -= dmg
-	fmt.Printf(" ⚔️ %s inflige %d dégâts à %s ⚔️ ! (%d/%d PV)\n", g.name, dmg, c.name, c.pv_act, c.pv_max)
+	fmt.Printf("%s inflige %d dégâts à %s ! (%d/%d PV)\n", g.name, dmg, c.name, c.pv_act, c.pv_max)
 	Wasted(c, g)
 }
 
@@ -316,28 +319,32 @@ func SlimeFight(c *character) {
 		if playerTurn {
 			characterTurn(c, &g)
 			if g.pv_act <= 0 {
-				fmt.Println(" 🏆 Victoire 🏆 ! Le slime est vaincu.")
+				fmt.Println("Victoire ! Le slime est vaincu.")
 				c.exp += g.expReward
-				fmt.Printf(" 🖤 Vous gagnez %d XP 🖤 !\n", g.expReward)
+				c.money += g.moneyReward
+				fmt.Printf("Vous gagnez %d XP !\n", g.expReward)
+				fmt.Printf("Vous gagnez %d Rubis !\n", g.moneyReward)
 				levelUp(c)
 				break
 			}
 			slimePattern(c, &g, turn)
 			if c.pv_act <= 0 {
-				fmt.Println(" ಥ‿ಥ Défaite ! Vous avez été vaincu. ಥ‿ಥ ")
+				fmt.Println("Défaite ! Vous avez été vaincu.")
 				break
 			}
 		} else {
 			slimePattern(c, &g, turn)
 			if c.pv_act <= 0 {
-				fmt.Println(" ಥ‿ಥ Défaite ! Vous avez été vaincu. ಥ‿ಥ ")
+				fmt.Println("Défaite ! Vous avez été vaincu.")
 				break
 			}
 			characterTurn(c, &g)
 			if g.pv_act <= 0 {
-				fmt.Println(" 🏆 Victoire 🏆 ! Le slime est vaincu.")
+				fmt.Println("Victoire ! Le slime est vaincu.")
 				c.exp += g.expReward
-				fmt.Printf(" 🖤 Vous gagnez %d XP 🖤 !\n", g.expReward)
+				c.money += g.moneyReward
+				fmt.Printf("Vous gagnez %d XP !\n", g.expReward)
+				fmt.Printf("Vous gagnez %d Rubis !\n", g.moneyReward)
 				levelUp(c)
 				break
 			}
@@ -349,13 +356,15 @@ func SlimeFight(c *character) {
 // ------ Goblin ------
 func initGoblin() monster {
 	return monster{
-		name:       "Gobelin d'entraînement",
-		niv:        9,
-		pv_max:     100,
-		pv_act:     100,
-		attack:     8,
-		initiative: 8,
-		expReward:  30,
+		name:        "Gobelin",
+		niv:         9,
+		pv_max:      100,
+		pv_act:      100,
+		attack:      8,
+		initiative:  8,
+		expReward:   30,
+		moneyReward: 25,
+		loot:        "Paille",
 	}
 }
 
@@ -365,7 +374,7 @@ func goblinPattern(c *character, g *monster, turn int) {
 		dmg *= 2
 	}
 	c.pv_act -= dmg
-	fmt.Printf(" ⚔️ %s inflige %d dégâts à %s ⚔️ ! (%d/%d PV)\n", g.name, dmg, c.name, c.pv_act, c.pv_max)
+	fmt.Printf("%s inflige %d dégâts à %s ! (%d/%d PV)\n", g.name, dmg, c.name, c.pv_act, c.pv_max)
 	Wasted(c, g)
 }
 
@@ -379,28 +388,109 @@ func GoblinFight(c *character) {
 		if playerTurn {
 			characterTurn(c, &g)
 			if g.pv_act <= 0 {
-				fmt.Println(" 🏆 Victoire 🏆 ! Le gobelin est vaincu.")
+				fmt.Println("Victoire ! Le gobelin est vaincu.")
 				c.exp += g.expReward
-				fmt.Printf(" 🖤 Vous gagnez %d XP 🖤 !\n", g.expReward)
+				c.money += g.moneyReward
+				addInventory(c, g.loot)
+				fmt.Printf("Vous gagnez %d XP !\n", g.expReward)
+				fmt.Printf("Vous gagnez %d Rubis !\n", g.moneyReward)
+				fmt.Println("Vous obtenez da la paille")
 				levelUp(c)
 				break
 			}
 			goblinPattern(c, &g, turn)
 			if c.pv_act <= 0 {
-				fmt.Println(" ಥ‿ಥ Défaite ! Vous avez été vaincu. ಥ‿ಥ")
+				fmt.Println("Défaite ! Vous avez été vaincu.")
 				break
 			}
 		} else {
 			goblinPattern(c, &g, turn)
 			if c.pv_act <= 0 {
-				fmt.Println(" ಥ‿ಥ Défaite ! Vous avez été vaincu. ಥ‿ಥ ")
+				fmt.Println("Défaite ! Vous avez été vaincu.")
 				break
 			}
 			characterTurn(c, &g)
 			if g.pv_act <= 0 {
-				fmt.Println(" 🏆 Victoire 🏆 ! Le gobelin est vaincu.")
+				fmt.Println("Victoire ! Le gobelin est vaincu.")
 				c.exp += g.expReward
-				fmt.Printf(" 🖤 Vous gagnez %d XP 🖤 !\n", g.expReward)
+				c.money += g.moneyReward
+				addInventory(c, g.loot)
+				fmt.Printf("Vous gagnez %d XP !\n", g.expReward)
+				fmt.Printf("Vous gagnez %d Rubis !\n", g.moneyReward)
+				fmt.Println("Vous obtenez da la paille")
+				levelUp(c)
+				break
+			}
+		}
+		turn++
+	}
+}
+
+// ------ Sanglier ------
+func initSanglier() monster {
+	return monster{
+		name:        "Sanglier",
+		niv:         11,
+		pv_max:      120,
+		pv_act:      120,
+		attack:      10,
+		initiative:  8,
+		expReward:   40,
+		moneyReward: 30,
+		loot:        "Cuir de Sanglier",
+	}
+}
+
+func sanglierPattern(c *character, g *monster, turn int) {
+	dmg := g.attack
+	if turn%3 == 0 {
+		dmg *= 2
+	}
+	c.pv_act -= dmg
+	fmt.Printf("%s inflige %d dégâts à %s ! (%d/%d PV)\n", g.name, dmg, c.name, c.pv_act, c.pv_max)
+	Wasted(c, g)
+}
+
+func SanglierFight(c *character) {
+	g := initSanglier()
+	turn := 1
+	playerTurn := c.initiative >= g.initiative
+
+	for c.pv_act > 0 && g.pv_act > 0 {
+		fmt.Printf("\n--- Tour %d ---\n", turn)
+		if playerTurn {
+			characterTurn(c, &g)
+			if g.pv_act <= 0 {
+				fmt.Println("Victoire ! Le sanglier est vaincu.")
+				c.exp += g.expReward
+				c.money += g.moneyReward
+				addInventory(c, g.loot)
+				fmt.Printf("Vous gagnez %d XP !\n", g.expReward)
+				fmt.Printf("Vous gagnez %d Rubis !\n", g.moneyReward)
+				fmt.Println("Vous obtenez du cuir de sanglier.")
+				levelUp(c)
+				break
+			}
+			sanglierPattern(c, &g, turn)
+			if c.pv_act <= 0 {
+				fmt.Println("Défaite ! Vous avez été vaincu.")
+				break
+			}
+		} else {
+			sanglierPattern(c, &g, turn)
+			if c.pv_act <= 0 {
+				fmt.Println("Défaite ! Vous avez été vaincu.")
+				break
+			}
+			characterTurn(c, &g)
+			if g.pv_act <= 0 {
+				fmt.Println("Victoire ! Le sanglier est vaincu.")
+				c.exp += g.expReward
+				c.money += g.moneyReward
+				addInventory(c, g.loot)
+				fmt.Printf("Vous gagnez %d XP !\n", g.expReward)
+				fmt.Printf("Vous gagnez %d Rubis !\n", g.moneyReward)
+				fmt.Println("Vous obtenez du cuir de sanglier.")
 				levelUp(c)
 				break
 			}
@@ -412,13 +502,15 @@ func GoblinFight(c *character) {
 // ------- Loup -------
 func initLoup() monster {
 	return monster{
-		name:       "Slime",
-		niv:        13,
-		pv_max:     150,
-		pv_act:     150,
-		attack:     14,
-		initiative: 6,
-		expReward:  10,
+		name:        "Loup",
+		niv:         13,
+		pv_max:      150,
+		pv_act:      150,
+		attack:      14,
+		initiative:  6,
+		expReward:   70,
+		moneyReward: 70,
+		loot:        "Foururre de Loup",
 	}
 }
 
@@ -428,7 +520,7 @@ func loupPattern(c *character, g *monster, turn int) {
 		dmg *= 2
 	}
 	c.pv_act -= dmg
-	fmt.Printf(" ⚔️ %s inflige %d dégâts à %s ⚔️ ! (%d/%d PV)\n", g.name, dmg, c.name, c.pv_act, c.pv_max)
+	fmt.Printf("%s inflige %d dégâts à %s ! (%d/%d PV)\n", g.name, dmg, c.name, c.pv_act, c.pv_max)
 	Wasted(c, g)
 }
 
@@ -442,28 +534,36 @@ func LoupFight(c *character) {
 		if playerTurn {
 			characterTurn(c, &g)
 			if g.pv_act <= 0 {
-				fmt.Println(" 🏆 Victoire 🏆 ! Le loup est vaincu.")
+				fmt.Println("Victoire ! Le loup est vaincu.")
 				c.exp += g.expReward
-				fmt.Printf(" 🖤 Vous gagnez %d XP 🖤 !\n", g.expReward)
+				c.money += g.moneyReward
+				addInventory(c, g.loot)
+				fmt.Printf("Vous gagnez %d XP !\n", g.expReward)
+				fmt.Printf("Vous gagnez %d Rubis !\n", g.moneyReward)
+				fmt.Println("Vous obtenez une foururre de loup.")
 				levelUp(c)
 				break
 			}
 			loupPattern(c, &g, turn)
 			if c.pv_act <= 0 {
-				fmt.Println(" ಥ‿ಥ Défaite ! Vous avez été vaincu. ಥ‿ಥ")
+				fmt.Println("Défaite ! Vous avez été vaincu.")
 				break
 			}
 		} else {
 			loupPattern(c, &g, turn)
 			if c.pv_act <= 0 {
-				fmt.Println(" ಥ‿ಥ Défaite ! Vous avez été vaincu. ಥ‿ಥ ")
+				fmt.Println("Défaite ! Vous avez été vaincu.")
 				break
 			}
 			characterTurn(c, &g)
 			if g.pv_act <= 0 {
-				fmt.Println(" 🏆 Victoire 🏆 ! Le loup est vaincu.")
+				fmt.Println("Victoire ! Le loup est vaincu.")
 				c.exp += g.expReward
-				fmt.Printf(" 🖤 Vous gagnez %d XP 🖤 !\n", g.expReward)
+				c.money += g.moneyReward
+				addInventory(c, g.loot)
+				fmt.Printf("Vous gagnez %d XP !\n", g.expReward)
+				fmt.Printf("Vous gagnez %d Rubis !\n", g.moneyReward)
+				fmt.Println("Vous obtenez une foururre de loup.")
 				levelUp(c)
 				break
 			}
@@ -475,13 +575,15 @@ func LoupFight(c *character) {
 // ------- Troll -------
 func initTroll() monster {
 	return monster{
-		name:       "Slime",
-		niv:        25,
-		pv_max:     250,
-		pv_act:     250,
-		attack:     20,
-		initiative: 10,
-		expReward:  100,
+		name:        "Troll",
+		niv:         25,
+		pv_max:      250,
+		pv_act:      250,
+		attack:      20,
+		initiative:  10,
+		expReward:   300,
+		moneyReward: 200,
+		loot:        "Peau de Troll",
 	}
 }
 
@@ -491,7 +593,7 @@ func trollPattern(c *character, g *monster, turn int) {
 		dmg *= 2
 	}
 	c.pv_act -= dmg
-	fmt.Printf(" ⚔️ %s inflige %d dégâts à %s ⚔️ ! (%d/%d PV)\n", g.name, dmg, c.name, c.pv_act, c.pv_max)
+	fmt.Printf("%s inflige %d dégâts à %s ! (%d/%d PV)\n", g.name, dmg, c.name, c.pv_act, c.pv_max)
 	Wasted(c, g)
 }
 
@@ -505,28 +607,36 @@ func TrollFight(c *character) {
 		if playerTurn {
 			characterTurn(c, &g)
 			if g.pv_act <= 0 {
-				fmt.Println(" 🏆 Victoire 🏆 ! Le troll est vaincu.")
+				fmt.Println("Victoire ! Le troll est vaincu.")
 				c.exp += g.expReward
-				fmt.Printf(" 🖤 Vous gagnez %d XP 🖤 !\n", g.expReward)
+				c.money += g.moneyReward
+				addInventory(c, g.loot)
+				fmt.Printf("Vous gagnez %d XP !\n", g.expReward)
+				fmt.Printf("Vous gagnez %d Rubis !\n", g.moneyReward)
+				fmt.Println("Vous obtenez une peau de troll.")
 				levelUp(c)
 				break
 			}
 			trollPattern(c, &g, turn)
 			if c.pv_act <= 0 {
-				fmt.Println(" ಥ‿ಥ Défaite ಥ‿ಥ ! Vous avez été vaincu.")
+				fmt.Println("Défaite ! Vous avez été vaincu.")
 				break
 			}
 		} else {
 			trollPattern(c, &g, turn)
 			if c.pv_act <= 0 {
-				fmt.Println(" ಥ‿ಥ Défaite ಥ‿ಥ ! Vous avez été vaincu.")
+				fmt.Println("Défaite ! Vous avez été vaincu.")
 				break
 			}
 			characterTurn(c, &g)
 			if g.pv_act <= 0 {
-				fmt.Println(" 🏆 Victoire 🏆 ! Le troll est vaincu.")
+				fmt.Println("Victoire ! Le troll est vaincu.")
 				c.exp += g.expReward
-				fmt.Printf(" 🖤 Vous gagnez %d XP 🖤 !\n", g.expReward)
+				c.money += g.moneyReward
+				addInventory(c, g.loot)
+				fmt.Printf("Vous gagnez %d XP !\n", g.expReward)
+				fmt.Printf("Vous gagnez %d Rubis !\n", g.moneyReward)
+				fmt.Println("Vous obtenez une peau de troll.")
 				levelUp(c)
 				break
 			}
@@ -535,16 +645,13 @@ func TrollFight(c *character) {
 	}
 }
 
-// ----- Combat -------
+// ----- Tour par tour -------
 func characterTurn(c *character, g *monster) {
 	for {
-		fmt.Println("╔════════════════════════════╗")
-		fmt.Println("║      ☠  MENU COMBAT ☠      ║")
-		fmt.Println("╟────────────────────────────╢")
-		fmt.Println("║ 1. Attaquer                ║")
-		fmt.Println("║ 2. Inventaire              ║")
-		fmt.Println("║ 3. Fuir                    ║")
-		fmt.Println("╚════════════════════════════╝")
+		fmt.Println(" \n ☠  MENU COMBAT ☠ \n ")
+		fmt.Println("1. Attaquer")
+		fmt.Println("2. Inventaire")
+		fmt.Println("3. FUIR")
 
 		var choice int
 		fmt.Println("Votre choix")
@@ -630,10 +737,11 @@ func exploration(c *character) {
 	rand.Seed(time.Now().UnixNano())
 
 	monsters := []monsterEntry{
-		{name: "Slime", weight: 60, fightFunc: SlimeFight},
-		{name: "Gobelin", weight: 29, fightFunc: GoblinFight},
-		{name: "Loup", weight: 9, fightFunc: LoupFight},
-		{name: "Troll", weight: 2, fightFunc: TrollFight},
+		{name: "Slime", weight: 40, fightFunc: SlimeFight},
+		{name: "Gobelin", weight: 25, fightFunc: GoblinFight},
+		{name: "Sanglier", weight: 20, fightFunc: SanglierFight},
+		{name: "Loup", weight: 12, fightFunc: LoupFight},
+		{name: "Troll", weight: 3, fightFunc: TrollFight},
 	}
 
 	totalWeight := 0
@@ -844,7 +952,7 @@ func Interface(c *character) {
 						}
 					}
 				case 50:
-					fmt.Println(" Votre choix parmis :\n 1. Boule de feu\n 2.wigadium\n 3.xxxxxx\n 4.xxxxxx")
+					fmt.Println(" Votre choix parmis :\n 1. Boule de feu\n 2. Projectile en pierre\n 3. Lame de Vent\n 4. Canon à eau")
 					fmt.Scan(&new_choice)
 					switch new_choice {
 					case 1:
@@ -857,9 +965,25 @@ func Interface(c *character) {
 						}
 					case 2:
 						for i := 0; i < len(c.inventaire); i++ {
-							if c.inventaire[i] == "Livre de sort : " {
-								spellBook(c, "")
-								removeInventory(c, "Livre de sort : ")
+							if c.inventaire[i] == "Livre de sort : Projectile en pierre" {
+								spellBook(c, "Projectile en Pierre")
+								removeInventory(c, "Livre de sort : Projectile en pierre")
+								break
+							}
+						}
+					case 3:
+						for i := 0; i < len(c.inventaire); i++ {
+							if c.inventaire[i] == "Livre de sort : Lame de Vent" {
+								spellBook(c, "Lame de Vent")
+								removeInventory(c, "Livre de sort : Lame de Vent")
+								break
+							}
+						}
+					case 4:
+						for i := 0; i < len(c.inventaire); i++ {
+							if c.inventaire[i] == "Livre de sort : Canon à eau" {
+								spellBook(c, "Canon à eau")
+								removeInventory(c, "Livre de sort : Canon à eau")
 								break
 							}
 						}
@@ -903,8 +1027,7 @@ func Interface(c *character) {
 		case 5:
 			exploration(c)
 		case 6:
-			fmt.Println("🎶 Réponse Mission 6 : ABBA (Mamma Mia, Gimme! Gimme! Gimme!, etc.)")
-			fmt.Println("📖 Réponse Mission 6 : Steven Spielberg (Ready Player One)")
+			fmt.Println("🎶 📖 Réponse Mission 6 : ABBA (Mamma Mia, Gimme! Gimme! Gimme!, etc.)\n 			  Steven Spielberg (Ready Player One)")
 		case 7:
 			fmt.Println("👋 Fin du jeu, merci d'avoir joué !")
 			return
@@ -916,31 +1039,39 @@ func Interface(c *character) {
 // Achat & Vente
 // =======================
 var prices = map[string]int{
-	"Potion de Soin":               3,
-	"Potion de poison":             6,
-	"Potion de mana":               4,
-	"Livre de sort : Boule de feu": 25,
-	"Fourrure de Loup":             4,
-	"Peau de Troll":                7,
-	"Cuir de Sanglier":             3,
-	"Plume de Corbeau":             1,
-	"Paille":                       1,
-	"Pomme":                        1,
-	"Petit Sac":                    10,
-	"Moyen Sac":                    20,
-	"Grand Sac":                    30,
+	"Pomme":                                 1,
+	"Paille":                                6,
+	"Cuir de Sanglier":                      20,
+	"Plume de Corbeau":                      1,
+	"Fourrure de Loup":                      35,
+	"Peau de Troll":                         40,
+	"Potion de Soin":                        10,
+	"Potion de Poison":                      15,
+	"Livre de sort -> Boule de feu":         50,
+	"Livre de sort -> Projectile en pierre": 90,
+	"Livre de sort -> Lame de vent":         150,
+	"Livre de sort -> Cannon à eau":         250,
+	"Petit Sac":                             30,
+	"Sac":                                   70,
+	"Grand Sac":                             150,
 }
 
 var selling = map[string]int{
-	"Potion de Soin":               2,
-	"Potion de poison":             4,
-	"Potion de mana":               3,
-	"Livre de sort : Boule de feu": 18,
-	"Fourrure de Loup":             3,
-	"Peau de Troll":                5,
-	"Cuir de Sanglier":             2,
-	"Plume de Corbeau":             1,
-	"Pomme":                        1,
+	"Pomme":                                 1,
+	"Paille":                                4,
+	"Cuir de Sanglier":                      15,
+	"Plume de Corbeau":                      1,
+	"Fourrure de Loup":                      28,
+	"Peau de Troll":                         35,
+	"Potion de Soin":                        7,
+	"Potion de Poison":                      12,
+	"Livre de sort -> Boule de feu":         35,
+	"Livre de sort -> Projectile en pierre": 70,
+	"Livre de sort -> Lame de vent":         120,
+	"Livre de sort -> Cannon à eau":         200,
+	"Petit Sac":                             25,
+	"Sac":                                   50,
+	"Grand Sac":                             120,
 }
 
 func removeMoney(c *character, money int) {
@@ -1003,19 +1134,22 @@ func merchantMenu(c *character) {
 		case 1:
 			for {
 				fmt.Println("\n Marchand \n ")
-				fmt.Println(" 1. épée (gratuit)")
-				fmt.Println(" 2. Pomme : 1 Rubis")
-				fmt.Println(" 3. Paille : 1 Rubis")
-				fmt.Println(" 4. Cuir de Sanglier : 3 Rubis")
-				fmt.Println(" 5. Plume de Corbeau : 1 Rubis")
-				fmt.Println(" 6. Fourure de Loup : 4 Rubis")
-				fmt.Println(" 7. Peau de Troll : 7 Rubis")
-				fmt.Println(" 8. Potion de Soin: 3 Rubis")
-				fmt.Println(" 9. Potion de Poison : 6 Rubis")
-				fmt.Println(" 10. Livre de sort -> Boule de feu : 25 Rubis")
-				fmt.Println(" 11. Petit Sac (+5) : 10 rubis")
-				fmt.Println(" 12. Sac (+10) : 20 rubis")
-				fmt.Println(" 13. Grand Sac (+15) : 30 rubis")
+				fmt.Println(" 1. épée 					0 Rubis")
+				fmt.Println(" 2. Pomme : 					1 Rubis")
+				fmt.Println(" 3. Paille : 					6 Rubis")
+				fmt.Println(" 4. Cuir de Sanglier : 				20 Rubis")
+				fmt.Println(" 5. Plume de Corbeau : 				1 Rubis")
+				fmt.Println(" 6. Fourure de Loup : 				35 Rubis")
+				fmt.Println(" 7. Peau de Troll : 				40 Rubis")
+				fmt.Println(" 8. Potion de Soin: 				10 Rubis")
+				fmt.Println(" 9. Potion de Poison : 				15 Rubis\n ")
+				fmt.Println(" 10. Livre de sort -> Boule de feu : 		50 Rubis")
+				fmt.Println(" 11. Livre de sort -> Projectile en pierre : 	90 Rubis")
+				fmt.Println(" 12. Livre de sort -> Lame de vent : 		150 Rubis")
+				fmt.Println(" 13. Livre de sort -> Cannon à eau : 		250 Rubis\n ")
+				fmt.Println(" 14. Petit Sac (+5) : 				30 rubis")
+				fmt.Println(" 15. Sac (+10) : 				70 rubis")
+				fmt.Println(" 16. Grand Sac (+15) : 				150 rubis")
 				fmt.Println("\n 777. Retour Inventaire")
 				fmt.Println("\n 0. Retour Menu")
 				fmt.Println("\n Votre choix ?")
@@ -1044,10 +1178,16 @@ func merchantMenu(c *character) {
 				case 10:
 					purchase(c, "Livre de sort : Boule de feu")
 				case 11:
-					purchase(c, "Petit Sac")
+					purchase(c, "Livre de sort : Projectile en pierre")
 				case 12:
-					purchase(c, "Sac")
+					purchase(c, "Livre de sort : Lame de vent")
 				case 13:
+					purchase(c, "Livre de sort : Cannon à eau")
+				case 14:
+					purchase(c, "Petit Sac")
+				case 15:
+					purchase(c, "Sac")
+				case 16:
 					purchase(c, "Grand Sac")
 				case 777:
 					accessInventory(*c)
@@ -1061,16 +1201,23 @@ func merchantMenu(c *character) {
 		case 2:
 			for {
 				fmt.Println("\n Marchand \n ")
-				fmt.Println(" 1. épée : 0 rubis")
-				fmt.Println(" 2. Pomme : 1 Rubis")
-				fmt.Println(" 3. Cuir de Sanglier : 2 Rubis")
-				fmt.Println(" 4. Plume de Corbeau : 1 Rubis")
-				fmt.Println(" 5. Fourure de Loup : 3 Rubis")
-				fmt.Println(" 6. Peau de Troll : 5 Rubis")
-				fmt.Println(" 7. Potion de Soin : 2 Rubis")
-				fmt.Println(" 8. Potion de poison : 4 Rubis")
-				fmt.Println(" 9. Livre de sort -> Boule de feu : 18 Rubis")
-				fmt.Println("\n 777. Retour Inventaire")
+				fmt.Println(" 1. épée 					0 Rubis")
+				fmt.Println(" 2. Pomme : 					1 Rubis")
+				fmt.Println(" 3. Paille : 					4 Rubis")
+				fmt.Println(" 4. Cuir de Sanglier : 				15 Rubis")
+				fmt.Println(" 5. Plume de Corbeau : 				1 Rubis")
+				fmt.Println(" 6. Fourure de Loup : 				28 Rubis")
+				fmt.Println(" 7. Peau de Troll : 				35 Rubis")
+				fmt.Println(" 8. Potion de Soin: 				7 Rubis")
+				fmt.Println(" 9. Potion de Poison : 				12 Rubis\n ")
+				fmt.Println(" 10. Livre de sort -> Boule de feu : 		35 Rubis")
+				fmt.Println(" 11. Livre de sort -> Projectile en pierre : 	70 Rubis")
+				fmt.Println(" 12. Livre de sort -> Lame de vent : 		120 Rubis")
+				fmt.Println(" 13. Livre de sort -> Cannon à eau : 		200 Rubis\n ")
+				fmt.Println(" 14. Petit Sac (+5) : 				25 rubis")
+				fmt.Println(" 15. Sac (+10) : 				50 rubis")
+				fmt.Println(" 16. Grand Sac (+15) : 				120 rubis")
+				fmt.Println("\n 30. Retour Inventaire")
 				fmt.Println("\n 0. Retour Menu")
 				fmt.Println("\n Votre choix ?")
 
@@ -1084,18 +1231,32 @@ func merchantMenu(c *character) {
 				case 3:
 					sell(c, "Cuir de Sanglier")
 				case 4:
-					sell(c, "Plume de Corbeau")
+					sell(c, "Cuir de Sanglier")
 				case 5:
-					sell(c, "Fourure de Loup")
+					sell(c, "Plume de Corbeau")
 				case 6:
-					sell(c, "Peau de Troll")
+					sell(c, "Fourure de Loup")
 				case 7:
-					sell(c, "Potion de Soin")
+					sell(c, "Peau de Troll")
 				case 8:
-					sell(c, "Potion de Poison")
+					sell(c, "Potion de Soin")
 				case 9:
+					sell(c, "Potion de Poison")
+				case 10:
 					sell(c, "Livre de sort : Boule de feu")
-				case 777:
+				case 11:
+					sell(c, "Livre de sort : Projectile en pierre")
+				case 12:
+					sell(c, "Livre de sort : Lame de vent")
+				case 13:
+					sell(c, "Livre de sort : Canon à eau")
+				case 14:
+					sell(c, "Petit Sac")
+				case 15:
+					sell(c, "Sac")
+				case 16:
+					sell(c, "Grand Sac")
+				case 30:
 					accessInventory(*c)
 				default:
 					fmt.Println("\n Choix Invalide, Veuillez réessayer")

@@ -31,7 +31,6 @@ Le jeu reprend les mécaniques classiques d'un RPG :
     - Humain -> 100 PV max
     - Elfe -> 80 PV max
     - Nain -> 120 PV max
-- Choix du **sexe** : Masculin / Féminin
 
 ---
 

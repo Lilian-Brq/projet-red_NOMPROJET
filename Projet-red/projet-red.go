@@ -174,6 +174,7 @@ func accessInventory(c character) {
 	}
 }
 
+// Fonction qui ajoute les items à l'inventaire
 func addInventory(c *character, item string) {
 	if len(c.inventaire) >= c.maxInventory {
 		fmt.Println("⚠️ Inventaire plein, impossible d'ajouter l'objet.\n ")
@@ -183,6 +184,7 @@ func addInventory(c *character, item string) {
 	fmt.Printf("✅ %s ajouté à l'inventaire.\n", item)
 }
 
+// Fonction qui retire les items à l'inventaire
 func removeInventory(c *character, item string) {
 	for i := 0; i < len(c.inventaire); i++ {
 		if c.inventaire[i] == item {
@@ -797,6 +799,7 @@ func characterTurn(c *character, g *monster) bool {
 	}
 }
 
+// Fonction qui choisit un monstre aléatoirement
 func exploration(c *character) {
 	rand.Seed(time.Now().UnixNano())
 
@@ -826,6 +829,7 @@ func exploration(c *character) {
 	}
 }
 
+// Fonction qui gère les dégâts de chaque attaque
 func getSkillDamage(skillName string) int {
 	skillDamages := map[string]int{
 		"Coup de Poing":        8,
@@ -861,6 +865,8 @@ func levelUp(c *character) {
 // =======================
 // Utilitaires
 // =======================
+
+// Vérifie le contenue de l'inventaire
 func containsInventory(slice []string, item string) bool {
 	for _, v := range slice {
 		if v == item {
@@ -870,6 +876,7 @@ func containsInventory(slice []string, item string) bool {
 	return false
 }
 
+// Augmente la taille de l'inventaire
 func upgradeInventorySlot(c *character, size string) {
 	switch size {
 	case "Petit sac":
@@ -886,6 +893,7 @@ func upgradeInventorySlot(c *character, size string) {
 	}
 }
 
+// Permet d'équipé un des équipements
 func equipItem(c *character, item string) {
 	switch item {
 	case "Chapeau de paille":
@@ -1122,6 +1130,8 @@ func Interface(c *character) {
 // =======================
 // Achat & Vente
 // =======================
+
+// Rescencement des prix achat
 var prices = map[string]int{
 	"Pomme":                                1,
 	"Paille":                               6,
@@ -1143,6 +1153,7 @@ var prices = map[string]int{
 	"Bâton Magique":                        60,
 }
 
+// Rescencement des prix vente
 var selling = map[string]int{
 	"Pomme":                                1,
 	"Paille":                               4,
@@ -1164,16 +1175,19 @@ var selling = map[string]int{
 	"Bâton Magique":                        45,
 }
 
+// Retire l'argent
 func removeMoney(c *character, money int) {
 	c.money -= money
 	fmt.Printf("❌ %d rubis ont été retirés de votre bourse.\n", money)
 }
 
+// Ajoute de l'argent
 func addMoney(c *character, money int) {
 	c.money += money
 	fmt.Printf("✅ %d rubis ont été ajoutés à votre bourse.\n", money)
 }
 
+// Fonction d'achat d'item
 func purchase(c *character, item string) {
 	price, ok := prices[item]
 	if !ok {
@@ -1199,6 +1213,7 @@ func purchase(c *character, item string) {
 	}
 }
 
+// Fonction de vente d'item
 func sell(c *character, item string) {
 	price := selling[item]
 	if containsInventory(c.inventaire, item) {
@@ -1210,6 +1225,7 @@ func sell(c *character, item string) {
 	}
 }
 
+// Fonction du Marchand
 func merchantMenu(c *character) {
 	for {
 		fmt.Println("\n Marchand")

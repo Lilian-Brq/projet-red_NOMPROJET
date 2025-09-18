@@ -93,3 +93,30 @@ Le jeu reprend les mécaniques classiques d'un RPG :
 - Passage de niveau du personnage -> augmentation PV, stats et mana
 - Passage de niveau des comptétences
 - Excédent d'XP conservé
+
+---
+
+## 📙 Répartion des taches
+- Tache 1 (Création personnage) : Lilian Solène
+- Tache 2 (Initialisation du personnage) : Lilian Solène
+- Tache 3  (Affichage des informations du perso) : Lilian Solène
+- Tache 4 (Accès à l’inventaire) : Lilian Solène
+- Tache 5 (Potion de vie) : Lilian Solène
+- Tache 5 (Création du menu) : Lilian Solène
+- Tache 7 (Marchand) : Lilian 
+- Tache 8 (Wasted ) : Solène
+- Tache 9 (Potion de poisson) : Lilian Solène
+- Tache 10 : (Livre de sort) : Lilian Solène
+- Tache 11 (Amélioration personnage) : Lilian
+- Tache 12(Limite d’inventaire) : Lilian
+- Tache 13 (Monnaie) : Solène
+- Tache 14 (Monnaie) : Solène
+- Tache 15(Forgeron) : Ethan
+- Tache 16 (Equipment initialisation) : Ethan
+- Tache 17(Equipment) : Solène
+- Tache 18 (sac à dos) : Lilian
+- Tache 19 (Monstres) : Solène Ethan
+- Tache 20  (Ia) : Ethan
+- Tache 21  (Interface combat) : Lilian
+- Tache 22 (Combat tour à tour) : Ethan
+- Taches bonus : Ethan

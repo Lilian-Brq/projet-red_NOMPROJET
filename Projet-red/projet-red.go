@@ -437,7 +437,7 @@ func GoblinFight(c *character) {
 }
 
 // ------ Sanglier ------
-func initSanglier() monster {
+func initWildboar() monster {
 	return monster{
 		name:        "Sanglier",
 		niv:         11,
@@ -451,7 +451,7 @@ func initSanglier() monster {
 	}
 }
 
-func sanglierPattern(c *character, g *monster, turn int) {
+func WildboarPattern(c *character, g *monster, turn int) {
 	dmg := g.attack
 	if turn%3 == 0 {
 		dmg *= 2
@@ -461,8 +461,8 @@ func sanglierPattern(c *character, g *monster, turn int) {
 	Wasted(c, g)
 }
 
-func SanglierFight(c *character) {
-	g := initSanglier()
+func WildboarFight(c *character) {
+	g := initWildboar()
 	turn := 1
 	playerTurn := c.initiative >= g.initiative
 
@@ -483,13 +483,13 @@ func SanglierFight(c *character) {
 				levelUp(c)
 				break
 			}
-			sanglierPattern(c, &g, turn)
+			WildboarPattern(c, &g, turn)
 			if c.pv_act <= 0 {
 				fmt.Println("ಥ‿ಥ Défaite ! Vous avez été vaincu. ಥ‿ಥ")
 				break
 			}
 		} else {
-			sanglierPattern(c, &g, turn)
+			WildboarPattern(c, &g, turn)
 			if c.pv_act <= 0 {
 				fmt.Println("ಥ‿ಥ Défaite ! Vous avez été vaincu. ಥ‿ಥ")
 				break
@@ -514,7 +514,7 @@ func SanglierFight(c *character) {
 }
 
 // ------- Loup -------
-func initLoup() monster {
+func initWolf() monster {
 	return monster{
 		name:        "Loup",
 		niv:         13,
@@ -528,7 +528,7 @@ func initLoup() monster {
 	}
 }
 
-func loupPattern(c *character, g *monster, turn int) {
+func wolfPattern(c *character, g *monster, turn int) {
 	dmg := g.attack
 	if turn%8 == 0 {
 		dmg *= 2
@@ -538,8 +538,8 @@ func loupPattern(c *character, g *monster, turn int) {
 	Wasted(c, g)
 }
 
-func LoupFight(c *character) {
-	g := initLoup()
+func WolfFight(c *character) {
+	g := initWolf()
 	turn := 1
 	playerTurn := c.initiative >= g.initiative
 
@@ -560,13 +560,13 @@ func LoupFight(c *character) {
 				levelUp(c)
 				break
 			}
-			loupPattern(c, &g, turn)
+			wolfPattern(c, &g, turn)
 			if c.pv_act <= 0 {
 				fmt.Println("ಥ‿ಥ Défaite ! Vous avez été vaincu. ಥ‿ಥ")
 				break
 			}
 		} else {
-			loupPattern(c, &g, turn)
+			wolfPattern(c, &g, turn)
 			if c.pv_act <= 0 {
 				fmt.Println("ಥ‿ಥ Défaite ! Vous avez été vaincu. ಥ‿ಥ")
 				break
@@ -803,8 +803,8 @@ func exploration(c *character) {
 	monsters := []monsterEntry{
 		{name: "Slime", weight: 40, fightFunc: SlimeFight},
 		{name: "Gobelin", weight: 25, fightFunc: GoblinFight},
-		{name: "Sanglier", weight: 20, fightFunc: SanglierFight},
-		{name: "Loup", weight: 12, fightFunc: LoupFight},
+		{name: "Sanglier", weight: 20, fightFunc: WildboarFight},
+		{name: "Loup", weight: 12, fightFunc: WolfFight},
 		{name: "Troll", weight: 3, fightFunc: TrollFight},
 	}
 
@@ -1096,11 +1096,11 @@ func Interface(c *character) {
 
 				switch new_choice {
 				case 1:
-					CraftForgeron(c, "Chapeau de paille")
+					CraftBlacksmith(c, "Chapeau de paille")
 				case 2:
-					CraftForgeron(c, "Salopette")
+					CraftBlacksmith(c, "Salopette")
 				case 3:
-					CraftForgeron(c, "Bottes de pluie")
+					CraftBlacksmith(c, "Bottes de pluie")
 				default:
 					fmt.Println("⚠️ Choix Invalide, Veuillez réessayer")
 				}
@@ -1377,7 +1377,7 @@ func merchantMenu(c *character) {
 // =======================
 // Forgeron
 // =======================
-func CraftForgeron(c *character, items string) {
+func CraftBlacksmith(c *character, items string) {
 	if items == "Chapeau de paille" {
 		if containsInventory(c.inventaire, "Plume de Corbeau") && containsInventory(c.inventaire, "Paille") {
 			if c.money >= 5 {

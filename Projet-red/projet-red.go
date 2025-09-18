@@ -684,46 +684,87 @@ func characterTurn(c *character, g *monster) bool {
 		case 1:
 			var attack int
 			fmt.Println(" 0. Retour")
+
+			weaponCount := 0
+			if containsInventory(c.inventaire, "Epée") {
+				weaponCount++
+				fmt.Println("1. Utiliser l'épée")
+			}
+			if containsInventory(c.inventaire, "Hache") {
+				weaponCount++
+				fmt.Printf("%d. Utiliser la hache\n", weaponCount)
+			}
+			if containsInventory(c.inventaire, "Bâton Magique") {
+				weaponCount++
+				fmt.Printf("%d. Utiliser le bâton magique\n", weaponCount)
+			}
+
 			fmt.Println("Quelle attaque souhaitez vous utiliser ?")
 			for i, s := range c.skill {
 				if s != "" {
-					fmt.Printf("%d. %s\n", i+1, s)
+					fmt.Printf("%d. %s\n", i+weaponCount+1, s)
 				}
 			}
 			fmt.Scan(&attack)
 
-			switch attack {
-			case 1:
-				g.pv_act = g.pv_act - 8
-				fmt.Printf("%s utilise %s et inflige 8 dégâts : %s à %d/%d PV\n", c.name, c.skill[0], g.name, g.pv_act, g.pv_max)
+			weaponUsed := false
+			currentWeapon := 1
+
+			if containsInventory(c.inventaire, "Epée") && attack == currentWeapon {
+				damage := 10
+				g.pv_act -= damage
+				fmt.Printf("%s utilise son Epée et inflige %d dégâts : %s à %d/%d PV\n", c.name, damage, g.name, g.pv_act, g.pv_max)
+				weaponUsed = true
+			}
+			if !weaponUsed && containsInventory(c.inventaire, "Epée") {
+				currentWeapon++
+			}
+
+			if !weaponUsed && containsInventory(c.inventaire, "Hache") && attack == currentWeapon {
+				damage := 16
+				g.pv_act -= damage
+				fmt.Printf("%s utilise sa hache et inflige %d dégâts : %s à %d/%d PV\n", c.name, damage, g.name, g.pv_act, g.pv_max)
+				weaponUsed = true
+			}
+			if !weaponUsed && containsInventory(c.inventaire, "Hache") {
+				currentWeapon++
+			}
+
+			if !weaponUsed && containsInventory(c.inventaire, "Bâton Magique") && attack == currentWeapon {
+				if c.mana >= 3 {
+					damage := 20
+					c.mana -= 3
+					g.pv_act -= damage
+					fmt.Printf("%s utilise son bâton magique et inflige %d dégâts : %s à %d/%d PV (Mana: %d/%d)\n", c.name, damage, g.name, g.pv_act, g.pv_max, c.mana, c.mana_max)
+					weaponUsed = true
+				} else {
+					fmt.Println("⚠️ Mana insuffisant pour utiliser le bâton magique (3 mana requis).")
+					continue
+				}
+			}
+
+			if weaponUsed {
 				return false
-			case 2:
-				if c.skill[1] != "" {
-					g.pv_act = g.pv_act - 18
-					fmt.Printf("%s utilise %s et inflige 18 dégâts : %s à %d/%d PV\n", c.name, c.skill[1], g.name, g.pv_act, g.pv_max)
+			}
+
+			skillIndex := attack - weaponCount - 1
+			if skillIndex >= 0 && skillIndex < len(c.skill) && c.skill[skillIndex] != "" {
+				skillName := c.skill[skillIndex]
+				damage := getSkillDamage(skillName)
+
+				if damage > 0 {
+					g.pv_act -= damage
+					fmt.Printf("%s utilise %s et inflige %d dégâts : %s à %d/%d PV\n", c.name, skillName, damage, g.name, g.pv_act, g.pv_max)
 					return false
+				} else {
+					fmt.Println("⚠️ Skill non reconnu ou sans dégâts.")
 				}
-			case 3:
-				if c.skill[2] != "" {
-					g.pv_act = g.pv_act - 25
-					fmt.Printf("%s utilise %s et inflige 25 dégâts : %s à %d/%d PV\n", c.name, c.skill[2], g.name, g.pv_act, g.pv_max)
-					return false
-				}
-			case 4:
-				if c.skill[3] != "" {
-					g.pv_act = g.pv_act - 30
-					fmt.Printf("%s utilise %s et inflige 30 dégâts : %s à %d/%d PV\n", c.name, c.skill[3], g.name, g.pv_act, g.pv_max)
-					return false
-				}
-			case 5:
-				if c.skill[4] != "" {
-					g.pv_act = g.pv_act - 40
-					fmt.Printf("%s utilise %s et inflige 40 dégâts : %s à %d/%d PV\n", c.name, c.skill[4], g.name, g.pv_act, g.pv_max)
-					return false
-				}
-			default:
+			} else if attack == 0 {
+				continue
+			} else {
 				fmt.Println("Choix invalide")
 			}
+
 		case 2:
 			for {
 				fmt.Println("\n ✧ Inventaire ✧ \n ")
@@ -783,6 +824,21 @@ func exploration(c *character) {
 			return
 		}
 	}
+}
+
+func getSkillDamage(skillName string) int {
+	skillDamages := map[string]int{
+		"Coup de Poing":        8,
+		"Boule de feu":         20,
+		"Projectile en Pierre": 15,
+		"Lame de Vent":         25,
+		"Canon à eau":          30,
+	}
+
+	if damage, exists := skillDamages[skillName]; exists {
+		return damage
+	}
+	return 0
 }
 
 // =======================
@@ -1082,6 +1138,9 @@ var prices = map[string]int{
 	"Petit Sac":                            30,
 	"Sac":                                  70,
 	"Grand Sac":                            150,
+	"Epée":                                 0,
+	"Hache":                                30,
+	"Bâton Magique":                        60,
 }
 
 var selling = map[string]int{
@@ -1100,6 +1159,9 @@ var selling = map[string]int{
 	"Petit Sac":                            25,
 	"Sac":                                  50,
 	"Grand Sac":                            120,
+	"Epée":                                 0,
+	"Hache":                                25,
+	"Bâton Magique":                        45,
 }
 
 func removeMoney(c *character, money int) {
@@ -1162,23 +1224,25 @@ func merchantMenu(c *character) {
 		case 1:
 			for {
 				fmt.Println("\n Marchand \n ")
-				fmt.Println(" 1. épée 					0 Rubis")
-				fmt.Println(" 2. Pomme : 					1 Rubis")
-				fmt.Println(" 3. Paille : 					6 Rubis")
-				fmt.Println(" 4. Cuir de Sanglier : 				20 Rubis")
-				fmt.Println(" 5. Plume de Corbeau : 				1 Rubis")
-				fmt.Println(" 6. Fourrure de Loup : 				35 Rubis")
-				fmt.Println(" 7. Peau de Troll : 				40 Rubis")
-				fmt.Println(" 8. Potion de Soin: 				10 Rubis")
-				fmt.Println(" 9. Potion de Poison : 				15 Rubis\n ")
-				fmt.Println(" 10. Livre de sort -> Boule de feu : 		50 Rubis")
-				fmt.Println(" 11. Livre de sort -> Projectile en pierre : 	90 Rubis")
-				fmt.Println(" 12. Livre de sort -> Lame de vent : 		150 Rubis")
-				fmt.Println(" 13. Livre de sort -> Canon à eau : 		250 Rubis\n ")
-				fmt.Println(" 14. Petit Sac (+5) : 				30 rubis")
-				fmt.Println(" 15. Sac (+10) : 				70 rubis")
-				fmt.Println(" 16. Grand Sac (+15) : 				150 rubis")
-				fmt.Println("\n 777. Retour Inventaire")
+				fmt.Println(" 1. Epée 					0 Rubis")
+				fmt.Println(" 2. Hache : 					30 rubis")
+				fmt.Println(" 3. Bâton Magique : 				60 rubis\n ")
+				fmt.Println(" 4. Pomme : 					1 Rubis")
+				fmt.Println(" 5. Paille : 					6 Rubis")
+				fmt.Println(" 6. Cuir de Sanglier : 				20 Rubis")
+				fmt.Println(" 7. Plume de Corbeau : 				1 Rubis")
+				fmt.Println(" 8. Fourrure de Loup : 				35 Rubis")
+				fmt.Println(" 9. Peau de Troll : 				40 Rubis")
+				fmt.Println(" 10. Potion de Soin: 				10 Rubis")
+				fmt.Println(" 11. Potion de Poison : 			15 Rubis\n ")
+				fmt.Println(" 12. Livre de sort -> Boule de feu : 		50 Rubis")
+				fmt.Println(" 13. Livre de sort -> Projectile en pierre : 	90 Rubis")
+				fmt.Println(" 14. Livre de sort -> Lame de vent : 		150 Rubis")
+				fmt.Println(" 15. Livre de sort -> Canon à eau : 		250 Rubis\n ")
+				fmt.Println(" 16. Petit Sac (+5) : 				30 rubis")
+				fmt.Println(" 17. Sac (+10) : 				70 rubis")
+				fmt.Println(" 18. Grand Sac (+15) : 				150 rubis ")
+				fmt.Println("\n 30. Retour Inventaire")
 				fmt.Println("\n 0. Retour Menu")
 				fmt.Println("\n Votre choix ?")
 
@@ -1186,38 +1250,42 @@ func merchantMenu(c *character) {
 
 				switch new_choice {
 				case 1:
-					purchase(c, "épée")
+					purchase(c, "Epée")
 				case 2:
-					purchase(c, "Pomme")
+					purchase(c, "Hache")
 				case 3:
-					purchase(c, "Paille")
+					purchase(c, "Bâton Magique")
 				case 4:
-					purchase(c, "Cuir de Sanglier")
+					purchase(c, "Pomme")
 				case 5:
-					purchase(c, "Plume de Corbeau")
+					purchase(c, "Paille")
 				case 6:
-					purchase(c, "Fourrure de Loup")
+					purchase(c, "Cuir de Sanglier")
 				case 7:
-					purchase(c, "Peau de Troll")
+					purchase(c, "Plume de Corbeau")
 				case 8:
-					purchase(c, "Potion de Soin")
+					purchase(c, "Fourrure de Loup")
 				case 9:
-					purchase(c, "Potion de Poison")
+					purchase(c, "Peau de Troll")
 				case 10:
-					purchase(c, "Livre de sort : Boule de feu")
+					purchase(c, "Potion de Soin")
 				case 11:
-					purchase(c, "Livre de sort : Projectile en pierre")
+					purchase(c, "Potion de Poison")
 				case 12:
-					purchase(c, "Livre de sort : Lame de vent")
+					purchase(c, "Livre de sort : Boule de feu")
 				case 13:
-					purchase(c, "Livre de sort : Canon à eau")
+					purchase(c, "Livre de sort : Projectile en pierre")
 				case 14:
-					purchase(c, "Petit Sac")
+					purchase(c, "Livre de sort : Lame de vent")
 				case 15:
-					purchase(c, "Sac")
+					purchase(c, "Livre de sort : Canon à eau")
 				case 16:
+					purchase(c, "Petit Sac")
+				case 17:
+					purchase(c, "Sac")
+				case 18:
 					purchase(c, "Grand Sac")
-				case 777:
+				case 30:
 					accessInventory(*c)
 				default:
 					fmt.Println("\n Choix Invalide, Veuillez réessayer")
@@ -1229,22 +1297,24 @@ func merchantMenu(c *character) {
 		case 2:
 			for {
 				fmt.Println("\n Marchand \n ")
-				fmt.Println(" 1. épée 					0 Rubis")
-				fmt.Println(" 2. Pomme : 					1 Rubis")
-				fmt.Println(" 3. Paille : 					4 Rubis")
-				fmt.Println(" 4. Cuir de Sanglier : 				15 Rubis")
-				fmt.Println(" 5. Plume de Corbeau : 				1 Rubis")
-				fmt.Println(" 6. Fourrure de Loup : 				28 Rubis")
-				fmt.Println(" 7. Peau de Troll : 				35 Rubis")
-				fmt.Println(" 8. Potion de Soin: 				7 Rubis")
-				fmt.Println(" 9. Potion de Poison : 				12 Rubis\n ")
-				fmt.Println(" 10. Livre de sort -> Boule de feu : 		35 Rubis")
-				fmt.Println(" 11. Livre de sort -> Projectile en pierre : 	70 Rubis")
-				fmt.Println(" 12. Livre de sort -> Lame de vent : 		120 Rubis")
-				fmt.Println(" 13. Livre de sort -> Canon à eau : 		200 Rubis\n ")
-				fmt.Println(" 14. Petit Sac (+5) : 				25 rubis")
-				fmt.Println(" 15. Sac (+10) : 				50 rubis")
-				fmt.Println(" 16. Grand Sac (+15) : 				120 rubis")
+				fmt.Println(" 1. Epée 					0 Rubis")
+				fmt.Println(" 2. Hache : 					25 rubis")
+				fmt.Println(" 3. Bâton Magique : 				45 rubis\n ")
+				fmt.Println(" 4. Pomme : 					1 Rubis")
+				fmt.Println(" 5. Paille : 					4 Rubis")
+				fmt.Println(" 6. Cuir de Sanglier : 			15 Rubis")
+				fmt.Println(" 7. Plume de Corbeau : 				1 Rubis")
+				fmt.Println(" 8. Fourrure de Loup : 				28 Rubis")
+				fmt.Println(" 9. Peau de Troll : 				35 Rubis")
+				fmt.Println(" 10. Potion de Soin: 				7 Rubis")
+				fmt.Println(" 11. Potion de Poison : 				12 Rubis\n ")
+				fmt.Println(" 12. Livre de sort -> Boule de feu : 		35 Rubis")
+				fmt.Println(" 13. Livre de sort -> Projectile en pierre : 	70 Rubis")
+				fmt.Println(" 14. Livre de sort -> Lame de vent : 		120 Rubis")
+				fmt.Println(" 15. Livre de sort -> Canon à eau : 		200 Rubis\n ")
+				fmt.Println(" 16. Petit Sac (+5) : 				25 rubis")
+				fmt.Println(" 17. Sac (+10) : 				50 rubis")
+				fmt.Println(" 18. Grand Sac (+15) : 				120 rubis")
 				fmt.Println("\n 30. Retour Inventaire")
 				fmt.Println("\n 0. Retour Menu")
 				fmt.Println("\n Votre choix ?")
@@ -1253,36 +1323,40 @@ func merchantMenu(c *character) {
 
 				switch new_choice {
 				case 1:
-					sell(c, "épée")
+					sell(c, "Epée")
 				case 2:
-					sell(c, "Pomme")
+					sell(c, "Hache")
 				case 3:
-					sell(c, "Cuir de Sanglier")
+					sell(c, "Bâton Magique")
 				case 4:
-					sell(c, "Cuir de Sanglier")
+					sell(c, "Pomme")
 				case 5:
-					sell(c, "Plume de Corbeau")
+					sell(c, "Paille")
 				case 6:
-					sell(c, "Fourrure de Loup")
+					sell(c, "Cuir de Sanglier")
 				case 7:
-					sell(c, "Peau de Troll")
+					sell(c, "Plume de Corbeau")
 				case 8:
-					sell(c, "Potion de Soin")
+					sell(c, "Fourrure de Loup")
 				case 9:
-					sell(c, "Potion de Poison")
+					sell(c, "Peau de Troll")
 				case 10:
-					sell(c, "Livre de sort : Boule de feu")
+					sell(c, "Potion de Soin")
 				case 11:
-					sell(c, "Livre de sort : Projectile en pierre")
+					sell(c, "Potion de Poison")
 				case 12:
-					sell(c, "Livre de sort : Lame de vent")
+					sell(c, "Livre de sort : Boule de feu")
 				case 13:
-					sell(c, "Livre de sort : Canon à eau")
+					sell(c, "Livre de sort : Projectile en pierre")
 				case 14:
-					sell(c, "Petit Sac")
+					sell(c, "Livre de sort : Lame de vent")
 				case 15:
-					sell(c, "Sac")
+					sell(c, "Livre de sort : Canon à eau")
 				case 16:
+					sell(c, "Petit Sac")
+				case 17:
+					sell(c, "Sac")
+				case 18:
 					sell(c, "Grand Sac")
 				case 30:
 					accessInventory(*c)

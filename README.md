@@ -49,6 +49,9 @@ Le jeu reprend les mécaniques classiques d'un RPG :
 
 - **Marchand** : vend/achète des items, des sacs et des potions
 - **Forgeron** : craft des armes et des équipements
+  
+  ### En cours de développement
+  
 - **Enchanteur** : enchante des équipements
 - **Alchimiste** : fabrique des potions (soins, poison, mana)
 - **Professeur** : enseigne des compétences
